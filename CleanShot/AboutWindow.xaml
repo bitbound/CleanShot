@@ -1,0 +1,23 @@
+﻿<Window x:Class="CleanShot.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CleanShot"
+        mc:Ignorable="d"
+        Title="About CleanShot" Height="275" Width="300" ResizeMode="NoResize" Icon="Assets/CaptureFrame_16x.png">
+    <StackPanel Margin="10">
+        <TextBlock Text="CleanShot" Margin="0, 0, 0, 10" FontWeight="Bold" FontSize="15"/>
+        <TextBlock Margin="0, 0, 0, 10">
+            <TextBlock Text="Version "></TextBlock>
+            <TextBlock Text="{Binding Version, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:AboutWindow}}}"></TextBlock>
+        </TextBlock>
+        <TextBlock Margin="0, 0, 0, 10" >
+            <TextBlock>Translucency (</TextBlock>
+            <Hyperlink Click="Hyperlink_Click">http://translucency.info</Hyperlink>
+            <TextBlock>)</TextBlock>
+        </TextBlock>
+        <TextBox Height="80" Margin="0, 0, 0, 5" TextWrapping="Wrap" Text="CleanShot is a portable, minimalistic alternative for taking simple screenshots." IsReadOnly="True"/>
+        <Button Content="OK" HorizontalAlignment="Right" Width="60" Height="30" IsCancel="True" IsDefault="True"/>
+    </StackPanel>
+</Window>
