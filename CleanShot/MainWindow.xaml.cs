@@ -147,34 +147,38 @@ namespace CleanShot
         private async Task CheckForUpdates(bool Silent)
         {
             System.Net.WebClient webClient = new System.Net.WebClient();
-            var strFilePath = System.IO.Path.GetTempPath() + "CleanShot.exe";
-            try
-            {
-                if (System.IO.File.Exists(strFilePath))
-                {
-                    System.IO.File.Delete(strFilePath);
-                }
-                await webClient.DownloadFileTaskAsync(new Uri("http://translucency.info/Downloads/CleanShot.exe"), strFilePath);
-            }
-            catch
-            {
-                if (!Silent)
-                {
-                    System.Windows.MessageBox.Show("Unable to contact the server.  Check your network connection or try again later.", "Server Unreachable", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
-                return;
-            }
+            System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
+            var result = await httpClient.GetAsync("https://translucency.info/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe");
+            var serverVersion = Version.Parse(await result.Content.ReadAsStringAsync());
             var thisVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            var currentVersion = Version.Parse(FileVersionInfo.GetVersionInfo(strFilePath).FileVersion);
-            if (currentVersion > thisVersion)
+            if (serverVersion > thisVersion)
             {
-                var result = System.Windows.MessageBox.Show("A new version of CleanShot is available!  Would you like to download it now?  It's a no-fuss, instant process.", "New Version Available", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
+                var strFilePath = System.IO.Path.GetTempPath() + "CleanShot.exe";
+                var msgResult = System.Windows.MessageBox.Show("A new version of CleanShot is available!  Would you like to download it now?  It's a no-fuss, instant process.", "New Version Available", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (msgResult == MessageBoxResult.Yes)
                 {
+                    if (System.IO.File.Exists(strFilePath))
+                    {
+                        System.IO.File.Delete(strFilePath);
+                    }
+                    try
+                    {
+                        
+                        await webClient.DownloadFileTaskAsync(new Uri("https://translucency.info/Downloads/CleanShot.exe"), strFilePath);
+                    }
+                    catch
+                    {
+                        if (!Silent)
+                        {
+                            System.Windows.MessageBox.Show("Unable to contact the server.  Check your network connection or try again later.", "Server Unreachable", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        }
+                        return;
+                    }
                     Process.Start(strFilePath, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
                     App.Current.Shutdown();
                     return;
                 }
+               
             }
             else
             {
