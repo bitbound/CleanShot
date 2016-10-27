@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CleanShot"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.OptionsWindow"
         mc:Ignorable="d"
-        Title="CleanShot Options" Height="250" Width="300" Icon="Assets/CaptureFrame_16x.png" Closing="Window_Closing">
+        Title="CleanShot Options" Height="250" Width="300" Icon="Camera_32xLG.ico" Closing="Window_Closing">
 
     <Window.DataContext>
         <Models:Settings/>

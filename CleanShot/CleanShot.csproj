@@ -43,7 +43,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Assets\CaptureFrame_16x.ico</ApplicationIcon>
+    <ApplicationIcon>Camera_32xLG.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -139,10 +139,11 @@
     <Resource Include="Assets\HamburgerMenu_16x.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\CaptureFrame_16x.png" />
+    <Resource Include="Assets\Camera_32xLG.png" />
+    <Resource Include="Assets\Hamburger.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\CaptureFrame_16x.ico" />
+    <Resource Include="Camera_32xLG.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

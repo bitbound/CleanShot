@@ -49,13 +49,14 @@ namespace CleanShot
                     }
                     catch (Exception ex)
                     {
-                        WriteToLog(ex.Message + ex.StackTrace);
+                        WriteToLog(ex.Message + "\t" +  ex.StackTrace);
                         continue;
                     }
                 }
                 if (success == false)
                 {
                     System.Windows.MessageBox.Show("Update failed.  Please close all CleanShot windows, then try again.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Process.GetProcessesByName("CleanShot").ToList().ForEach(p => p.Kill());
                 }
                 else
                 {
