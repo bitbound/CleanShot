@@ -27,12 +27,14 @@ namespace CleanShot
         System.Windows.Point startPoint { get; set; }
         bool captureStarted { get; set; }
         bool captureCompleted { get; set; }
+        double dpiScale = 1;
         public ScreenshotWindow()
         {
             InitializeComponent();
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            dpiScale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
             if (Screen.AllScreens.Length % 2 == 0)
             {
                 labelHeader.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
@@ -42,9 +44,10 @@ namespace CleanShot
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.Width = SystemInformation.VirtualScreen.Width;
+            this.Height = SystemInformation.VirtualScreen.Height;
             this.Left = SystemInformation.VirtualScreen.Left;
             this.Top = SystemInformation.VirtualScreen.Top;
-            rectClip1.Rect = new Rect(SystemInformation.VirtualScreen.X, SystemInformation.VirtualScreen.Y, SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
+            rectClip1.Rect = new Rect(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
         }
         private async void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -74,9 +77,10 @@ namespace CleanShot
                             await Task.Delay(1);
                         }
                         captureCompleted = true;
-                        var bitmap = new System.Drawing.Bitmap((int)rectClip2.Rect.Width, (int)rectClip2.Rect.Height);
+                        var scaledRect = getScaledRect();
+                        var bitmap = new System.Drawing.Bitmap((int)scaledRect.Width, (int)scaledRect.Height);
                         var graphic = Graphics.FromImage(bitmap);
-                        graphic.CopyFromScreen(new System.Drawing.Point((int)rectClip2.Rect.X + (int)this.Left, (int)rectClip2.Rect.Y + (int)this.Top), System.Drawing.Point.Empty, new System.Drawing.Size((int)rectClip2.Rect.Width, (int)rectClip2.Rect.Height));
+                        graphic.CopyFromScreen(new System.Drawing.Point((int)scaledRect.X + (int)this.Left, (int)scaledRect.Y + (int)this.Top), System.Drawing.Point.Empty, new System.Drawing.Size((int)scaledRect.Width, (int)scaledRect.Height));
                         graphic.Save();
                         if (Settings.Current.SaveToDisk)
                         {
@@ -125,9 +129,8 @@ namespace CleanShot
             }
             captureCompleted = false;
             captureStarted = true;
-            var point = Mouse.GetPosition(this);
-            startPoint = point;
-            rectClip2.Rect = new Rect(point, point);
+            startPoint = e.GetPosition(borderClip);
+            rectClip2.Rect = new Rect(startPoint, startPoint);
         }
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
@@ -140,7 +143,7 @@ namespace CleanShot
             toolTip.FontSize = 18;
             toolTip.FontWeight = FontWeights.Bold;
             toolTip.Foreground = new SolidColorBrush(Colors.Red);
-            toolTip.PlacementRectangle = rectClip2.Rect;
+            toolTip.PlacementRectangle = getScaledRect();
             toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
             toolTip.IsOpen = true;
         }
@@ -149,9 +152,12 @@ namespace CleanShot
         {
             if (captureStarted && e.LeftButton == MouseButtonState.Pressed)
             {
-                rectClip2.Rect = new Rect(startPoint, startPoint);
-                rectClip2.Rect = new Rect(startPoint, Mouse.GetPosition(this));
+                rectClip2.Rect = new Rect(startPoint, e.GetPosition(borderClip));
             }
+        }
+        private Rect getScaledRect()
+        {
+            return new Rect(Math.Round(rectClip2.Rect.X * dpiScale, 0), Math.Round(rectClip2.Rect.Y * dpiScale, 0), Math.Round(rectClip2.Rect.Width * dpiScale, 0), Math.Round(rectClip2.Rect.Height * dpiScale, 0));
         }
 
     }

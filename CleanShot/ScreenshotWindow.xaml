@@ -10,7 +10,7 @@
         <Grid.Background>
             <SolidColorBrush Color="White" Opacity="0.01"/>
         </Grid.Background>
-        <Border>
+        <Border x:Name="borderClip">
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity=".4"/>
             </Border.Background>
