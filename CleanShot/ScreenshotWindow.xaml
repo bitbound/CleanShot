@@ -12,7 +12,7 @@
         </Grid.Background>
         <Border x:Name="borderClip">
             <Border.Background>
-                <SolidColorBrush Color="White" Opacity=".4"/>
+                <SolidColorBrush Color="White" Opacity=".25"/>
             </Border.Background>
             <Border.Clip>
                 <CombinedGeometry GeometryCombineMode="Exclude">
@@ -25,6 +25,6 @@
                 </CombinedGeometry>
             </Border.Clip>
         </Border>
-        <Label x:Name="labelHeader" Content="Click and drag a box around the area you want to screenshot." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#FF818181"/>
+        <Label x:Name="labelHeader" Content="Click and drag a box around the area you want to screenshot." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="WhiteSmoke"/>
     </Grid>
 </Window>

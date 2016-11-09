@@ -47,7 +47,7 @@ namespace CleanShot
             this.Height = SystemInformation.VirtualScreen.Height;
             this.Left = SystemInformation.VirtualScreen.Left;
             this.Top = SystemInformation.VirtualScreen.Top;
-            rectClip1.Rect = new Rect(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
+            rectClip1.Rect = new Rect(0, 0, this.Width, this.Height);
         }
         private async void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -143,7 +143,7 @@ namespace CleanShot
             toolTip.FontSize = 18;
             toolTip.FontWeight = FontWeights.Bold;
             toolTip.Foreground = new SolidColorBrush(Colors.Red);
-            toolTip.PlacementRectangle = getScaledRect();
+            toolTip.PlacementRectangle = new Rect(rectClip2.Rect.X + SystemInformation.VirtualScreen.X, rectClip2.Rect.Y + SystemInformation.VirtualScreen.Y, rectClip2.Rect.Width, rectClip2.Rect.Height);
             toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
             toolTip.IsOpen = true;
         }
