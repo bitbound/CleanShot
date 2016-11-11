@@ -12,7 +12,7 @@
         </Grid.Background>
         <Border x:Name="borderClip">
             <Border.Background>
-                <SolidColorBrush Color="White" Opacity=".25"/>
+                <SolidColorBrush Color="White" Opacity=".4"/>
             </Border.Background>
             <Border.Clip>
                 <CombinedGeometry GeometryCombineMode="Exclude">

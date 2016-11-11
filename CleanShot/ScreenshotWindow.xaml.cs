@@ -143,7 +143,8 @@ namespace CleanShot
             toolTip.FontSize = 18;
             toolTip.FontWeight = FontWeights.Bold;
             toolTip.Foreground = new SolidColorBrush(Colors.Red);
-            toolTip.PlacementRectangle = new Rect(rectClip2.Rect.X + SystemInformation.VirtualScreen.X, rectClip2.Rect.Y + SystemInformation.VirtualScreen.Y, rectClip2.Rect.Width, rectClip2.Rect.Height);
+            var scaledRect = getScaledRect();
+            toolTip.PlacementRectangle = new Rect(scaledRect.X + this.Left, scaledRect.Y + this.Top, scaledRect.Width, scaledRect.Height);
             toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
             toolTip.IsOpen = true;
         }
