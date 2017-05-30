@@ -89,9 +89,10 @@ namespace CleanShot
             }
         }
 
-        private void buttonCapture_Click(object sender, RoutedEventArgs e)
+        private async void buttonCapture_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
+            await Task.Delay(500);
             new ScreenshotWindow().ShowDialog();
         }
 

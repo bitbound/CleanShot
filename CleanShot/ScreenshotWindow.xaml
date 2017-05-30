@@ -5,11 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanShot"
         mc:Ignorable="d"
-        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="True" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="{x:Null}" WindowStartupLocation="CenterScreen" Height="800" Width="800" Loaded="Window_Loaded" Icon="Camera_32xLG.ico" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross" SizeChanged="Window_SizeChanged">
-    <Grid>
-        <Grid.Background>
-            <SolidColorBrush Color="White" Opacity="0.01"/>
-        </Grid.Background>
+        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="True" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="{x:Null}" WindowStartupLocation="CenterScreen" Height="800" Width="800" Loaded="Window_Loaded" Icon="Assets/CleanShot.png" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross" SizeChanged="Window_SizeChanged">
+    <Grid x:Name="gridMain">
         <Border x:Name="borderClip">
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity=".4"/>
@@ -25,6 +22,7 @@
                 </CombinedGeometry>
             </Border.Clip>
         </Border>
-        <Label x:Name="labelHeader" Content="Click and drag a box around the area you want to screenshot." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="WhiteSmoke"/>
+        <Border x:Name="borderCapture" BorderBrush="Red" BorderThickness="1" Visibility="Collapsed"></Border>
+        <Label x:Name="labelHeader" Content="Click and drag a box around the area you want to capture." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="WhiteSmoke"/>
     </Grid>
 </Window>

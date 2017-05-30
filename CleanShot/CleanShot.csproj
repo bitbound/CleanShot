@@ -43,9 +43,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Camera_32xLG.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\CleanShot.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Encoder, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=x86">
+      <HintPath>..\packages\Microsoft.Expression.Encoder.4.0.4276.3\lib\net45\Microsoft.Expression.Encoder.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -122,6 +129,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -139,11 +147,13 @@
     <Resource Include="Assets\HamburgerMenu_16x.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Camera_32xLG.png" />
     <Resource Include="Assets\Hamburger.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Camera_32xLG.ico" />
+    <Resource Include="Assets\CleanShot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\CleanShot.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -23,10 +23,10 @@ namespace CleanShot
     /// </summary>
     public partial class ScreenshotWindow : Window
     {
-        System.Windows.Controls.ToolTip toolTip = new System.Windows.Controls.ToolTip();
-        System.Windows.Point startPoint { get; set; }
-        bool captureStarted { get; set; }
-        bool captureCompleted { get; set; }
+        System.Windows.Controls.ToolTip ConfirmTooltip { get; set; } = new System.Windows.Controls.ToolTip();
+        System.Windows.Point StartPoint { get; set; }
+        bool CaptureStarted { get; set; }
+        bool CaptureCompleted { get; set; }
         double dpiScale = 1;
         public ScreenshotWindow()
         {
@@ -39,6 +39,22 @@ namespace CleanShot
             {
                 labelHeader.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
             }
+            var width = (int)Math.Round(SystemInformation.VirtualScreen.Width * dpiScale);
+            var height = (int)Math.Round(SystemInformation.VirtualScreen.Height * dpiScale);
+            var bitmap = new Bitmap((int)width, (int)height);
+            var graphic = Graphics.FromImage(bitmap);
+            graphic.CopyFromScreen(0, 0, 0, 0, new System.Drawing.Size(width, height));
+            using (var ms = new MemoryStream())
+            {
+                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.StreamSource = ms;
+                bi.CacheOption = BitmapCacheOption.OnLoad;
+                bi.EndInit();
+                bi.Freeze();
+                gridMain.Background = new ImageBrush(bi);
+            }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -49,13 +65,13 @@ namespace CleanShot
             this.Top = SystemInformation.VirtualScreen.Top;
             rectClip1.Rect = new Rect(0, 0, this.Width, this.Height);
         }
-        private async void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
-                if (toolTip.IsOpen == true)
+                if (ConfirmTooltip.IsOpen == true)
                 {
-                    toolTip.IsOpen = false;
+                    ConfirmTooltip.IsOpen = false;
                     rectClip2.Rect = new Rect(0, 0, 0, 0);
                 }
                 else
@@ -64,21 +80,27 @@ namespace CleanShot
                     this.Close();
                 }
             }
-            else if (e.Key == Key.Enter)
+        }
+
+        private async void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right)
             {
-                if (toolTip.IsOpen == true)
+                if (ConfirmTooltip.IsOpen == true)
                 {
                     try
                     {
-                        toolTip.IsOpen = false;
-                        this.Visibility = Visibility.Collapsed;
-                        while (this.IsVisible || toolTip.IsVisible)
+                        CaptureCompleted = true;
+                        ConfirmTooltip.IsOpen = false;
+                        borderClip.Visibility = Visibility.Collapsed;
+                        labelHeader.Visibility = Visibility.Collapsed;
+                        borderCapture.Visibility = Visibility.Collapsed;
+                        while (borderClip.IsVisible || labelHeader.IsVisible || ConfirmTooltip.IsVisible || borderCapture.IsVisible)
                         {
                             await Task.Delay(1);
                         }
-                        captureCompleted = true;
                         var scaledRect = getScaledRect();
-                        var bitmap = new System.Drawing.Bitmap((int)scaledRect.Width, (int)scaledRect.Height);
+                        var bitmap = new Bitmap((int)scaledRect.Width, (int)scaledRect.Height);
                         var graphic = Graphics.FromImage(bitmap);
                         graphic.CopyFromScreen(new System.Drawing.Point((int)scaledRect.X + (int)this.Left, (int)scaledRect.Y + (int)this.Top), System.Drawing.Point.Empty, new System.Drawing.Size((int)scaledRect.Width, (int)scaledRect.Height));
                         graphic.Save();
@@ -119,41 +141,44 @@ namespace CleanShot
                     }
                 }
             }
-        }
-
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (toolTip.IsOpen)
+            else if (e.ChangedButton == MouseButton.Left)
             {
-                toolTip.IsOpen = false;
+                if (ConfirmTooltip.IsOpen)
+                {
+                    ConfirmTooltip.IsOpen = false;
+                }
+                CaptureCompleted = false;
+                CaptureStarted = true;
+                StartPoint = e.GetPosition(borderClip);
+                rectClip2.Rect = new Rect(StartPoint, StartPoint);
+                borderCapture.Margin = new Thickness(0);
+                borderCapture.Visibility = Visibility.Visible;
             }
-            captureCompleted = false;
-            captureStarted = true;
-            startPoint = e.GetPosition(borderClip);
-            rectClip2.Rect = new Rect(startPoint, startPoint);
+            
         }
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!captureStarted)
+            if (!CaptureStarted || CaptureCompleted)
             {
                 return;
             }
-            toolTip.Content = "Press Enter to confirm capture region.  Press Esc to cancel.";
-            toolTip.FontSize = 18;
-            toolTip.FontWeight = FontWeights.Bold;
-            toolTip.Foreground = new SolidColorBrush(Colors.Red);
+            ConfirmTooltip.Content = "Right-click to confirm capture region.  Press Esc to cancel.";
+            ConfirmTooltip.FontSize = 18;
+            ConfirmTooltip.FontWeight = FontWeights.Bold;
+            ConfirmTooltip.Foreground = new SolidColorBrush(Colors.Blue);
             var scaledRect = getScaledRect();
-            toolTip.PlacementRectangle = new Rect(scaledRect.X + this.Left, scaledRect.Y + this.Top, scaledRect.Width, scaledRect.Height);
-            toolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
-            toolTip.IsOpen = true;
+            ConfirmTooltip.PlacementRectangle = new Rect(scaledRect.X + this.Left, scaledRect.Y + this.Top, scaledRect.Width, scaledRect.Height);
+            ConfirmTooltip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
+            ConfirmTooltip.IsOpen = true;
         }
 
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (captureStarted && e.LeftButton == MouseButtonState.Pressed)
+            if (CaptureStarted && e.LeftButton == MouseButtonState.Pressed)
             {
-                rectClip2.Rect = new Rect(startPoint, e.GetPosition(borderClip));
+                rectClip2.Rect = new Rect(StartPoint, e.GetPosition(borderClip));
+                borderCapture.Margin = new Thickness(StartPoint.X, StartPoint.Y, borderClip.ActualWidth - StartPoint.X - rectClip2.Rect.Width, borderClip.ActualHeight - StartPoint.Y - rectClip2.Rect.Height);
             }
         }
         private Rect getScaledRect()

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanShot"
         mc:Ignorable="d"
-        Title="About CleanShot" Height="275" Width="300" ResizeMode="NoResize" Icon="Camera_32xLG.ico">
+        Title="About CleanShot" Height="275" Width="300" ResizeMode="NoResize" Icon="Assets/CleanShot.png">
     <StackPanel Margin="10">
         <TextBlock Text="CleanShot" Margin="0, 0, 0, 10" FontWeight="Bold" FontSize="15"/>
         <TextBlock Margin="0, 0, 0, 10">
