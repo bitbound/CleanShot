@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CleanShot"
-        xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.OptionsWindow"
+        xmlns:local="clr-namespace:CleanShot.Windows"
+        xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.Windows.Options"
         mc:Ignorable="d"
-        Title="CleanShot Options" Height="250" Width="300" Icon="Assets/CleanShot.png" Closing="Window_Closing">
+        Title="CleanShot Options" Height="250" Width="300" Closing="Window_Closing" Icon="/CleanShot;component/Assets/CompactCamera_Nolan.ico">
 
     <Window.DataContext>
         <Models:Settings/>
@@ -19,12 +19,12 @@
         <TextBlock Text="Save Folder:" Margin="0,0,0,5"/>
         <TextBox x:Name="textSaveFolder" Text="{Binding SaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textSaveFolder_LostFocus"/>
         <Button x:Name="buttonBrowse" HorizontalAlignment="Right" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Click="buttonBrowse_Click" ToolTip="Browse" Margin="0,0,0,10">
-            <Image Source="Assets/Folder_32xMD.png">
+            <Image Source="/CleanShot;component/Assets/Folder_32xMD.png">
                 <Image.OpacityMask>
-                    <ImageBrush ImageSource="Assets/Folder_32xMD.png"/>
+                    <ImageBrush ImageSource="/CleanShot;component/Assets/Folder_32xMD.png"/>
                 </Image.OpacityMask>
             </Image>
         </Button>
-        <Button x:Name="buttonUninstall" Content=" Uninstall " HorizontalAlignment="Left" ToolTip="Remove data folder and files from AppData." Click="buttonUninstall_Click"/>
+        <Button x:Name="buttonUninstall" Content="Uninstall" Padding="5" HorizontalAlignment="Left" ToolTip="Remove data folder and files from AppData." Click="buttonUninstall_Click"/>
     </StackPanel>
 </Window>

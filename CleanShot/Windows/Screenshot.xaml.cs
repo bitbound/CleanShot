@@ -16,19 +16,21 @@ using System.Windows.Shapes;
 using System.IO;
 using CleanShot.Models;
 
-namespace CleanShot
+namespace CleanShot.Windows
 {
     /// <summary>
     /// Interaction logic for ScreenshotWindow.xaml
     /// </summary>
-    public partial class ScreenshotWindow : Window
+    public partial class Screenshot : Window
     {
         System.Windows.Controls.ToolTip ConfirmTooltip { get; set; } = new System.Windows.Controls.ToolTip();
         System.Windows.Point StartPoint { get; set; }
         bool CaptureStarted { get; set; }
         bool CaptureCompleted { get; set; }
+        Bitmap CaptureBitmap { get; set; }
+        Graphics CaptureGraphic { get; set; }
         double dpiScale = 1;
-        public ScreenshotWindow()
+        public Screenshot()
         {
             InitializeComponent();
         }
@@ -41,12 +43,14 @@ namespace CleanShot
             }
             var width = (int)Math.Round(SystemInformation.VirtualScreen.Width * dpiScale);
             var height = (int)Math.Round(SystemInformation.VirtualScreen.Height * dpiScale);
-            var bitmap = new Bitmap((int)width, (int)height);
-            var graphic = Graphics.FromImage(bitmap);
-            graphic.CopyFromScreen(0, 0, 0, 0, new System.Drawing.Size(width, height));
+            var left = (int)Math.Round(SystemInformation.VirtualScreen.Left * dpiScale);
+            var top = (int)Math.Round(SystemInformation.VirtualScreen.Top * dpiScale);
+            CaptureBitmap = new Bitmap((int)width, (int)height);
+            CaptureGraphic = Graphics.FromImage(CaptureBitmap);
+            CaptureGraphic.CopyFromScreen(left, top, 0, 0, new System.Drawing.Size(width, height));
             using (var ms = new MemoryStream())
             {
-                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                CaptureBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 var bi = new BitmapImage();
                 bi.BeginInit();
                 bi.StreamSource = ms;
@@ -100,10 +104,10 @@ namespace CleanShot
                             await Task.Delay(1);
                         }
                         var scaledRect = getScaledRect();
-                        var bitmap = new Bitmap((int)scaledRect.Width, (int)scaledRect.Height);
-                        var graphic = Graphics.FromImage(bitmap);
-                        graphic.CopyFromScreen(new System.Drawing.Point((int)scaledRect.X + (int)this.Left, (int)scaledRect.Y + (int)this.Top), System.Drawing.Point.Empty, new System.Drawing.Size((int)scaledRect.Width, (int)scaledRect.Height));
-                        graphic.Save();
+                        CaptureBitmap = new Bitmap((int)scaledRect.Width, (int)scaledRect.Height);
+                        CaptureGraphic = Graphics.FromImage(CaptureBitmap);
+                        CaptureGraphic.CopyFromScreen(new System.Drawing.Point((int)scaledRect.X + (int)this.Left, (int)scaledRect.Y + (int)this.Top), System.Drawing.Point.Empty, new System.Drawing.Size((int)scaledRect.Width, (int)scaledRect.Height));
+                        CaptureGraphic.Save();
                         if (Settings.Current.SaveToDisk)
                         {
                             var count = 0;
@@ -117,11 +121,11 @@ namespace CleanShot
                                 saveFile += "_" + count.ToString();
                             }
 
-                            bitmap.Save(saveFile + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                            CaptureBitmap.Save(saveFile + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                         }
                         if (Settings.Current.CopyToClipboard)
                         {
-                            System.Windows.Forms.Clipboard.SetImage(bitmap);
+                            System.Windows.Forms.Clipboard.SetImage(CaptureBitmap);
                         }
                         App.Current.MainWindow.Visibility = Visibility.Visible;
                         this.Close();

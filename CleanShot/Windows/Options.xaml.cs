@@ -14,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CleanShot.Models;
 
-namespace CleanShot
+namespace CleanShot.Windows
 {
     /// <summary>
     /// Interaction logic for OptionsWindow.xaml
     /// </summary>
-    public partial class OptionsWindow : Window
+    public partial class Options : Window
     {
-        public OptionsWindow()
+        public Options()
         {
             InitializeComponent();
             DataContext = Settings.Current;
@@ -60,15 +60,7 @@ namespace CleanShot
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!Settings.Current.Uninstalled)
-            {
-                var serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(Settings));
-                var strSaveFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot";
-                Directory.CreateDirectory(strSaveFolder);
-                var fs = new FileStream(strSaveFolder + @"\Settings.json", FileMode.Create);
-                serializer.WriteObject(fs, Settings.Current);
-                fs.Close();
-            }
+            Settings.Save();
         }
     }
 }

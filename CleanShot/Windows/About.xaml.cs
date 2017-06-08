@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace CleanShot
+namespace CleanShot.Windows
 {
     /// <summary>
-    /// Interaction logic for AboutWindow.xaml
+    /// Interaction logic for About.xaml
     /// </summary>
-    public partial class AboutWindow : Window
+    public partial class About : Window
     {
-        public AboutWindow()
+        public About()
         {
             InitializeComponent();
         }

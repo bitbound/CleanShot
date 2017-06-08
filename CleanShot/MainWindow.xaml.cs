@@ -16,6 +16,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CleanShot.Models;
+using System.IO;
+using System.Windows.Interop;
+using CleanShot.Windows;
 
 namespace CleanShot
 {
@@ -24,110 +27,51 @@ namespace CleanShot
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow Current { get; set; }
         public MainWindow()
         {
+            App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             App.Current.DispatcherUnhandledException += DispatcherUnhandledException;
             InitializeComponent();
+            Current = this;
             this.DataContext = Settings.Current;
-            var args = Environment.GetCommandLineArgs();
-            if (args.Length > 1 && System.IO.File.Exists(args[1]))
-            {
-                var count = 0;
-                var success = false;
-                while (success == false)
-                {
-                    System.Threading.Thread.Sleep(200);
-                    count++;
-                    if (count > 25)
-                    {
-                        break;
-                    }
-                    try
-                    {
-                        System.IO.File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, args[1], true);
-                        success = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        WriteToLog(ex.Message + "\t" +  ex.StackTrace);
-                        continue;
-                    }
-                }
-                if (success == false)
-                {
-                    System.Windows.MessageBox.Show("Update failed.  Please close all CleanShot windows, then try again.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Process.GetProcessesByName("CleanShot").ToList().ForEach(p => p.Kill());
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("Update successful!  CleanShot will now restart.", "Update Complete", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Process.Start(args[1]);
-                }
-                App.Current.Shutdown();
-                return;
-            }
+            CheckArgs();
         }
-
+        
         private void DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            WriteToLog(e.Exception.Message + e.Exception.StackTrace + Environment.NewLine);
+            WriteToLog(e.Exception);
         }
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await CheckForUpdates(true);
-            var fileInfo = new System.IO.FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Settings.json");
-            if (fileInfo.Exists)
-            {
-                var serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(Settings));
-                var fs = new System.IO.FileStream(fileInfo.FullName, System.IO.FileMode.OpenOrCreate);
-                var settings = (Settings)serializer.ReadObject(fs);
-                Settings.Current.CopyToClipboard = settings.CopyToClipboard;
-                Settings.Current.SaveToDisk = settings.SaveToDisk;
-                Settings.Current.SaveFolder = settings.SaveFolder;
-                Settings.Current.AlwaysOnTop = settings.AlwaysOnTop;
-            }
+            Settings.Load();
+            TrayIcon.Create();
         }
-
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            TrayIcon.Icon.ShowBalloonTip("", "CleanShot is still running.", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+            this.Hide();
+            base.OnClosed(e);
+        }
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            Hotkey.Set();
+            base.OnSourceInitialized(e);
+        }
         private async void buttonCapture_Click(object sender, RoutedEventArgs e)
         {
-            this.Visibility = Visibility.Collapsed;
-            await Task.Delay(500);
-            new ScreenshotWindow().ShowDialog();
+            await InitiateCapture();
         }
-
-        private async void menuFeature_Click(object sender, RoutedEventArgs e)
+        private async void menuUpdate_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("CleanShot is already packed with an exhaustive list of features, so I'm not taking any additional requests.  Thanks for your understanding.", "Features Maxed", MessageBoxButton.OK, MessageBoxImage.Information);
-            await Task.Delay(4000);
-            AskIfFunny();
+            await CheckForUpdates(false);
         }
-
-        private async void AskIfFunny()
-        {
-            var result = System.Windows.MessageBox.Show("Did you enjoy the previous message?  In your opinion, was it humorous?", "Feature Survey", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            await Task.Delay(500);
-            AskToSend();
-        }
-        private async void AskToSend()
-        {
-            var result = System.Windows.MessageBox.Show("Thank you for your feedback.  Can I send your response to the developer?", "Send Feedback", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            await Task.Delay(500);
-            if (result == MessageBoxResult.Yes)
-            {
-                System.Windows.MessageBox.Show("Just kidding.  I'm not really going to send your responses.  But seriously, feel free to send me any suggestions via the contact form on my website (https://translucency.info).", "Notification of Joke", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("Well, I'm going to send it anyway.", "Disregarding User Input Notification", MessageBoxButton.OK, MessageBoxImage.Information);
-                await Task.Delay(4000);
-                AskIfFunny();
-            }
-        }
-
         private void menuOptions_Click(object sender, RoutedEventArgs e)
         {
-            var options = new OptionsWindow();
+            var options = new Options();
             options.Owner = this;
             options.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             options.ShowDialog();
@@ -135,7 +79,7 @@ namespace CleanShot
 
         private void menuAbout_Click(object sender, RoutedEventArgs e)
         {
-            var about = new AboutWindow();
+            var about = new About();
             about.Owner = this;
             about.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             about.ShowDialog();
@@ -159,9 +103,9 @@ namespace CleanShot
                 var msgResult = System.Windows.MessageBox.Show("A new version of CleanShot is available!  Would you like to download it now?  It's a no-fuss, instant process.", "New Version Available", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (msgResult == MessageBoxResult.Yes)
                 {
-                    if (System.IO.File.Exists(strFilePath))
+                    if (File.Exists(strFilePath))
                     {
-                        System.IO.File.Delete(strFilePath);
+                        File.Delete(strFilePath);
                     }
                     try
                     {
@@ -191,14 +135,68 @@ namespace CleanShot
             }
         }
 
-        private async void menuUpdate_Click(object sender, RoutedEventArgs e)
+        private void CheckArgs()
         {
-            await CheckForUpdates(false);
+            var args = Environment.GetCommandLineArgs();
+            if (args.Length > 1 && File.Exists(args[1]))
+            {
+                var success = false;
+                var startTime = DateTime.Now;
+                while (success == false)
+                {
+                    System.Threading.Thread.Sleep(200);
+                    if (DateTime.Now - startTime > TimeSpan.FromSeconds(5))
+                    {
+                        break;
+                    }
+                    try
+                    {
+                        File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, args[1], true);
+                        success = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        WriteToLog(ex);
+                        continue;
+                    }
+                }
+                if (success == false)
+                {
+                    System.Windows.MessageBox.Show("Update failed.  Please close all CleanShot windows, then try again.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Process.GetProcessesByName("CleanShot").ToList().ForEach(p => p.Kill());
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Update successful!  CleanShot will now restart.", "Update Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Process.Start(args[1]);
+                }
+                App.Current.Shutdown();
+                return;
+            }
         }
-        private void WriteToLog(string Message)
+
+        public async Task InitiateCapture()
         {
-            System.IO.Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\");
-            System.IO.File.AppendAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Log.txt", DateTime.Now.ToString() + "\t-\t" + Message + Environment.NewLine);
+            if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
+            {
+                this.Visibility = Visibility.Collapsed;
+                await Task.Delay(500);
+                new Screenshot().ShowDialog();
+            }
+            else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
+            {
+
+            }
+        }
+        private void WriteToLog(Exception ExMessage)
+        {
+            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\");
+            var ex = ExMessage;
+            while (ex != null)
+            {
+                File.AppendAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Log.txt", DateTime.Now.ToString() + "\t" + ex.Message + "\t" + ex.Source + "\t" + ex.StackTrace + Environment.NewLine);
+                ex = ex.InnerException;
+            }
         }
     }
 }

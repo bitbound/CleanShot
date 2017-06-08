@@ -1,0 +1,28 @@
+﻿<Window x:Class="CleanShot.Windows.Video"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CleanShot.Windows"
+        mc:Ignorable="d"
+        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="True" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="{x:Null}" WindowStartupLocation="CenterScreen" Height="800" Width="800" Loaded="Window_Loaded" Icon="/CleanShot;component/Assets/CompactCamera_Nolan.ico" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross" SizeChanged="Window_SizeChanged">
+    <Grid x:Name="gridMain">
+        <Border x:Name="borderClip">
+            <Border.Background>
+                <SolidColorBrush Color="White" Opacity=".4"/>
+            </Border.Background>
+            <Border.Clip>
+                <CombinedGeometry GeometryCombineMode="Exclude">
+                    <CombinedGeometry.Geometry1>
+                        <RectangleGeometry  x:Name="rectClip1"></RectangleGeometry>
+                    </CombinedGeometry.Geometry1>
+                    <CombinedGeometry.Geometry2>
+                        <RectangleGeometry x:Name="rectClip2"></RectangleGeometry>
+                    </CombinedGeometry.Geometry2>
+                </CombinedGeometry>
+            </Border.Clip>
+        </Border>
+        <Border x:Name="borderCapture" BorderBrush="Red" BorderThickness="1" Visibility="Collapsed"></Border>
+        <Label x:Name="labelHeader" Content="Click and drag a box around the area you want to record." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="WhiteSmoke"/>
+    </Grid>
+</Window>

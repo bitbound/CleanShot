@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CleanShot"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.MainWindow"
         mc:Ignorable="d"
-        Title="CleanShot" Height="100" Width="150" ResizeMode="NoResize" Icon="Assets/CleanShot.png" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}">
+        Title="CleanShot" Height="100" Width="150" ResizeMode="NoResize" Icon="Assets/CompactCamera_Nolan.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing">
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
@@ -14,10 +14,9 @@
         <Button x:Name="buttonCapture" Height="25" Width="80" HorizontalAlignment="Left" VerticalAlignment="Center" Click="buttonCapture_Click">
             <Image Source="Assets/WindowScreenshot_16x.png" Stretch="None"/>
         </Button>
-        <Button x:Name="buttonMenu" HorizontalAlignment="Right" VerticalAlignment="Center" Height="25" Width="25" BorderBrush="{x:Null}" Click="buttonMenu_Click">
+        <Button x:Name="buttonMenu" HorizontalAlignment="Right" VerticalAlignment="Center" Height="25" Width="25" BorderBrush="Transparent" Click="buttonMenu_Click" Background="{x:Null}">
             <Button.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="menuFeature"  Header="Request a Feature" Click="menuFeature_Click"/>
                     <MenuItem x:Name="menuUpdate"  Header="Check for Updates" Click="menuUpdate_Click"/>
                     <MenuItem x:Name="menuOptions" Header="Options" Click="menuOptions_Click"/>
                     <MenuItem x:Name="menuAbout" Header="About" Click="menuAbout_Click"/>
@@ -26,9 +25,7 @@
             <Button.OpacityMask>
                 <ImageBrush ImageSource="Assets/HamburgerMenu_16x.png"/>
             </Button.OpacityMask>
-            <Button.Background>
-                <ImageBrush ImageSource="Assets/HamburgerMenu_16x.png"/>
-            </Button.Background>
+            <Image Source="Assets/HamburgerMenu_16x.png"></Image>
         </Button>
     </Grid>
 </Window>
