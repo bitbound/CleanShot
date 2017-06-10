@@ -19,6 +19,7 @@ using CleanShot.Models;
 using System.IO;
 using System.Windows.Interop;
 using CleanShot.Windows;
+using CleanShot.Controls;
 
 namespace CleanShot
 {
@@ -30,19 +31,29 @@ namespace CleanShot
         public static MainWindow Current { get; set; }
         public MainWindow()
         {
+            App.Current.DispatcherUnhandledException += (send, arg) =>
+            {
+                arg.Handled = true;
+                WriteToLog(arg.Exception);
+            };
+            App.Current.Exit += (send, arg) =>
+            {
+                Settings.Save();
+            };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            App.Current.DispatcherUnhandledException += DispatcherUnhandledException;
+            foreach (var proc in Process.GetProcessesByName("CleanShot"))
+            {
+                if (proc.Id != Process.GetCurrentProcess().Id)
+                {
+                    proc.Kill();
+                }
+            }
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
             CheckArgs();
         }
-        
-        private void DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-            WriteToLog(e.Exception);
-        }
+
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await CheckForUpdates(true);
@@ -52,7 +63,10 @@ namespace CleanShot
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            TrayIcon.Icon.ShowBalloonTip("", "CleanShot is still running.", Hardcodet.Wpf.TaskbarNotification.BalloonIcon.Info);
+            if (Settings.Current.IsTrayNotificationEnabled)
+            {
+                TrayIcon.Icon.ShowCustomBalloon(new TrayBalloon(), System.Windows.Controls.Primitives.PopupAnimation.Fade, 5000);
+            }
             this.Hide();
             base.OnClosed(e);
         }

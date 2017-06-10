@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
 using CleanShot.Models;
+using CleanShot.Win32;
+using System.Runtime.InteropServices;
 
 namespace CleanShot.Windows
 {
@@ -23,52 +25,47 @@ namespace CleanShot.Windows
     /// </summary>
     public partial class Screenshot : Window
     {
+        public static Screenshot Current { get; set; }
         System.Windows.Controls.ToolTip ConfirmTooltip { get; set; } = new System.Windows.Controls.ToolTip();
         System.Windows.Point StartPoint { get; set; }
         bool CaptureStarted { get; set; }
         bool CaptureCompleted { get; set; }
         Bitmap CaptureBitmap { get; set; }
+        BitmapImage BackgroundImage { get; set; }
         Graphics CaptureGraphic { get; set; }
-        double dpiScale = 1;
+        double DpiScale { get; set; } = 1;
         public Screenshot()
         {
             InitializeComponent();
+            Current = this;
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            dpiScale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
-            if (Screen.AllScreens.Length % 2 == 0)
-            {
-                labelHeader.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-            }
-            var width = (int)Math.Round(SystemInformation.VirtualScreen.Width * dpiScale);
-            var height = (int)Math.Round(SystemInformation.VirtualScreen.Height * dpiScale);
-            var left = (int)Math.Round(SystemInformation.VirtualScreen.Left * dpiScale);
-            var top = (int)Math.Round(SystemInformation.VirtualScreen.Top * dpiScale);
-            CaptureBitmap = new Bitmap((int)width, (int)height);
-            CaptureGraphic = Graphics.FromImage(CaptureBitmap);
-            CaptureGraphic.CopyFromScreen(left, top, 0, 0, new System.Drawing.Size(width, height));
+            DpiScale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
+            var screen = SystemInformation.VirtualScreen;
+            await GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height));
+            borderClip.Visibility = Visibility.Visible;
+            labelHeader.Visibility = Visibility.Visible;
+            borderCapture.Visibility = Visibility.Visible;
+            rectClip1.Rect = new Rect(screen.Left, screen.Top, screen.Width, screen.Height);
+            this.Width = screen.Width;
+            this.Height = screen.Height;
+            this.Left = screen.Left;
+            this.Top = screen.Top;
+            
             using (var ms = new MemoryStream())
             {
                 CaptureBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.StreamSource = ms;
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.EndInit();
-                bi.Freeze();
-                gridMain.Background = new ImageBrush(bi);
+                BackgroundImage = new BitmapImage();
+                BackgroundImage.BeginInit();
+                BackgroundImage.StreamSource = ms;
+                BackgroundImage.CacheOption = BitmapCacheOption.OnLoad;
+                BackgroundImage.EndInit();
+                BackgroundImage.Freeze();
+                gridMain.Background = new ImageBrush(BackgroundImage);
             }
         }
 
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            this.Width = SystemInformation.VirtualScreen.Width;
-            this.Height = SystemInformation.VirtualScreen.Height;
-            this.Left = SystemInformation.VirtualScreen.Left;
-            this.Top = SystemInformation.VirtualScreen.Top;
-            rectClip1.Rect = new Rect(0, 0, this.Width, this.Height);
-        }
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
@@ -77,6 +74,7 @@ namespace CleanShot.Windows
                 {
                     ConfirmTooltip.IsOpen = false;
                     rectClip2.Rect = new Rect(0, 0, 0, 0);
+                    borderCapture.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -94,41 +92,8 @@ namespace CleanShot.Windows
                 {
                     try
                     {
-                        CaptureCompleted = true;
-                        ConfirmTooltip.IsOpen = false;
-                        borderClip.Visibility = Visibility.Collapsed;
-                        labelHeader.Visibility = Visibility.Collapsed;
-                        borderCapture.Visibility = Visibility.Collapsed;
-                        while (borderClip.IsVisible || labelHeader.IsVisible || ConfirmTooltip.IsVisible || borderCapture.IsVisible)
-                        {
-                            await Task.Delay(1);
-                        }
-                        var scaledRect = getScaledRect();
-                        CaptureBitmap = new Bitmap((int)scaledRect.Width, (int)scaledRect.Height);
-                        CaptureGraphic = Graphics.FromImage(CaptureBitmap);
-                        CaptureGraphic.CopyFromScreen(new System.Drawing.Point((int)scaledRect.X + (int)this.Left, (int)scaledRect.Y + (int)this.Top), System.Drawing.Point.Empty, new System.Drawing.Size((int)scaledRect.Width, (int)scaledRect.Height));
-                        CaptureGraphic.Save();
-                        if (Settings.Current.SaveToDisk)
-                        {
-                            var count = 0;
-                            var saveFile = System.IO.Path.Combine(Settings.Current.SaveFolder, "CleanShot_" + DateTime.Now.ToString().Replace("/", "-").Replace(":", "."));
-                            if (File.Exists(saveFile + ".jpg"))
-                            {
-                                while (File.Exists(saveFile + "_" + count.ToString() + ".jpg"))
-                                {
-                                    count++;
-                                }
-                                saveFile += "_" + count.ToString();
-                            }
-
-                            CaptureBitmap.Save(saveFile + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-                        }
-                        if (Settings.Current.CopyToClipboard)
-                        {
-                            System.Windows.Forms.Clipboard.SetImage(CaptureBitmap);
-                        }
-                        App.Current.MainWindow.Visibility = Visibility.Visible;
-                        this.Close();
+                        await GetCapture(GetDrawnRegion());
+                        SaveCapture();
                     }
                     catch (Exception ex)
                     {
@@ -151,11 +116,13 @@ namespace CleanShot.Windows
                 {
                     ConfirmTooltip.IsOpen = false;
                 }
+                borderCapture.Width = 0;
+                borderCapture.Height = 0;
                 CaptureCompleted = false;
                 CaptureStarted = true;
-                StartPoint = e.GetPosition(borderClip);
+                StartPoint = e.GetPosition(this);
                 rectClip2.Rect = new Rect(StartPoint, StartPoint);
-                borderCapture.Margin = new Thickness(0);
+                borderCapture.Margin = new Thickness(StartPoint.X, StartPoint.Y, 0, 0);
                 borderCapture.Visibility = Visibility.Visible;
             }
             
@@ -171,7 +138,7 @@ namespace CleanShot.Windows
             ConfirmTooltip.FontSize = 18;
             ConfirmTooltip.FontWeight = FontWeights.Bold;
             ConfirmTooltip.Foreground = new SolidColorBrush(Colors.Blue);
-            var scaledRect = getScaledRect();
+            var scaledRect = GetDrawnRegion();
             ConfirmTooltip.PlacementRectangle = new Rect(scaledRect.X + this.Left, scaledRect.Y + this.Top, scaledRect.Width, scaledRect.Height);
             ConfirmTooltip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
             ConfirmTooltip.IsOpen = true;
@@ -181,13 +148,96 @@ namespace CleanShot.Windows
         {
             if (CaptureStarted && e.LeftButton == MouseButtonState.Pressed)
             {
-                rectClip2.Rect = new Rect(StartPoint, e.GetPosition(borderClip));
-                borderCapture.Margin = new Thickness(StartPoint.X, StartPoint.Y, borderClip.ActualWidth - StartPoint.X - rectClip2.Rect.Width, borderClip.ActualHeight - StartPoint.Y - rectClip2.Rect.Height);
+                var pos = e.GetPosition(this);
+                rectClip2.Rect = new Rect(StartPoint, pos);
+
+                var left = Math.Min(pos.X, StartPoint.X);
+                var top = Math.Min(pos.Y, StartPoint.Y);
+                var width = Math.Abs(StartPoint.X - pos.X);
+                var height = Math.Abs(StartPoint.Y - pos.Y);
+
+                borderCapture.Margin = new Thickness(left, top, 0, 0);
+                borderCapture.Width = width;
+                borderCapture.Height = height;
             }
         }
-        private Rect getScaledRect()
+        private Rect GetDrawnRegion()
         {
-            return new Rect(Math.Round(rectClip2.Rect.X * dpiScale, 0), Math.Round(rectClip2.Rect.Y * dpiScale, 0), Math.Round(rectClip2.Rect.Width * dpiScale, 0), Math.Round(rectClip2.Rect.Height * dpiScale, 0));
+            return new Rect(Math.Round(rectClip2.Rect.X * DpiScale, 0), Math.Round(rectClip2.Rect.Y * DpiScale, 0), Math.Round(rectClip2.Rect.Width * DpiScale, 0), Math.Round(rectClip2.Rect.Height * DpiScale, 0));
+        }
+
+        private async Task GetCapture(Rect CaptureRegion)
+        {
+            CaptureCompleted = true;
+            ConfirmTooltip.IsOpen = false;
+            borderClip.Visibility = Visibility.Collapsed;
+            labelHeader.Visibility = Visibility.Collapsed;
+            borderCapture.Visibility = Visibility.Collapsed;
+            while (borderClip.IsVisible || labelHeader.IsVisible || ConfirmTooltip.IsVisible || borderCapture.IsVisible)
+            {
+                await Task.Delay(1);
+            }
+            CaptureBitmap = new Bitmap((int)CaptureRegion.Width, (int)CaptureRegion.Height);
+            CaptureGraphic = Graphics.FromImage(CaptureBitmap);
+            var screen = SystemInformation.VirtualScreen;
+
+            IntPtr hWnd = IntPtr.Zero;
+            IntPtr hDC = IntPtr.Zero;
+            IntPtr graphDC = IntPtr.Zero;
+            try
+            {
+                hWnd = User32.GetDesktopWindow();
+                hDC = User32.GetWindowDC(hWnd);
+                graphDC = CaptureGraphic.GetHdc();
+                var copyResult = GDI32.BitBlt(graphDC, 0, 0, (int)CaptureRegion.Width, (int)CaptureRegion.Height, hDC, (int)CaptureRegion.Left, (int)CaptureRegion.Top, GDI32.TernaryRasterOperations.SRCCOPY | GDI32.TernaryRasterOperations.CAPTUREBLT);
+                if (!copyResult)
+                {
+                    throw new Exception("Screen capture failed.");
+                }
+                CaptureGraphic.ReleaseHdc(graphDC);
+                User32.ReleaseDC(hWnd, hDC);
+                // Get cursor information to draw on the screenshot.
+                var ci = new User32.CursorInfo();
+                ci.cbSize = Marshal.SizeOf(ci);
+                User32.GetCursorInfo(out ci);
+                if (ci.flags == User32.CURSOR_SHOWING)
+                {
+                    using (var icon = System.Drawing.Icon.FromHandle(ci.hCursor))
+                    {
+                        CaptureGraphic.DrawIcon(icon, ci.ptScreenPos.x, ci.ptScreenPos.y);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CaptureGraphic.ReleaseHdc(graphDC);
+                User32.ReleaseDC(hWnd, hDC);
+                throw ex;
+            }
+        }
+        private void SaveCapture()
+        {
+            if (Settings.Current.SaveToDisk)
+            {
+                var count = 0;
+                var saveFile = System.IO.Path.Combine(Settings.Current.SaveFolder, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss"));
+                if (File.Exists(saveFile + ".png"))
+                {
+                    while (File.Exists(saveFile + "_" + count.ToString() + ".png"))
+                    {
+                        count++;
+                    }
+                    saveFile += "_" + count.ToString();
+                }
+                Directory.CreateDirectory(Settings.Current.SaveFolder);
+                CaptureBitmap.Save(saveFile + ".png", System.Drawing.Imaging.ImageFormat.Png);
+            }
+            if (Settings.Current.CopyToClipboard)
+            {
+                System.Windows.Forms.Clipboard.SetImage(CaptureBitmap);
+            }
+            App.Current.MainWindow.Visibility = Visibility.Visible;
+            this.Close();
         }
 
     }

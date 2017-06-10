@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CleanShot.Windows;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -48,16 +49,21 @@ namespace CleanShot
                 int vkCode = Marshal.ReadInt32(lParam);
                 if (vkCode == PrintScreen)
                 {
+                    if (Screenshot.Current?.IsVisible != true)
+                    {
 #pragma warning disable
-                    MainWindow.Current.InitiateCapture();
+                        MainWindow.Current.InitiateCapture();
 #pragma warning restore
+                        return new IntPtr(1);
+                    }
                 }
                 else if (vkCode == ScrollLock)
                 {
                     // TODO: Video capture.
+                    MessageBox.Show("If we had video capture ready, it'd be happening now.", "Video Capture", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return new IntPtr(1);
                 }
             }
-
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 

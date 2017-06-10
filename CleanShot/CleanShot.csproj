@@ -82,7 +82,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\TrayBalloon.xaml.cs">
+      <DependentUpon>TrayBalloon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TrayIcon.cs" />
+    <Compile Include="Win32\GDI32.cs" />
+    <Compile Include="Win32\User32.cs" />
     <Compile Include="Windows\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
@@ -97,6 +102,10 @@
     <Compile Include="Windows\Video.xaml.cs">
       <DependentUpon>Video.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\TrayBalloon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -165,26 +174,16 @@
     <Resource Include="Assets\Hamburger.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\CleanShot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\CleanShot.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\CompactCamera_Dusk.png" />
     <Resource Include="Assets\CompactCamera_Nolan.png" />
-    <Resource Include="Assets\CompactCamera_Office_lvl2.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\CompactCamera_Dusk.ico" />
     <Resource Include="Assets\CompactCamera_Nolan.ico" />
-    <Resource Include="Assets\CompactCamera_Office_lvl2.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
+    <Resource Include="Assets\icons8-Info-96.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets" Condition="Exists('..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" />

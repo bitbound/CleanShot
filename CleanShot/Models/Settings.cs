@@ -16,6 +16,7 @@ namespace CleanShot.Models
         public bool CopyToClipboard { get; set; } = true;
         public bool AlwaysOnTop { get; set; } = true;
         public bool Uninstalled { get; set; } = false;
+        public bool IsTrayNotificationEnabled { get; set; } = true;
         public CaptureModes CaptureMode { get; set; } = CaptureModes.Image;
         public enum CaptureModes
         {
@@ -30,11 +31,10 @@ namespace CleanShot.Models
                 var serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(Settings));
                 var fs = new FileStream(fileInfo.FullName, System.IO.FileMode.OpenOrCreate);
                 var settings = (Settings)serializer.ReadObject(fs);
-                Settings.Current.CopyToClipboard = settings.CopyToClipboard;
-                Settings.Current.SaveToDisk = settings.SaveToDisk;
-                Settings.Current.SaveFolder = settings.SaveFolder;
-                Settings.Current.AlwaysOnTop = settings.AlwaysOnTop;
-                Settings.Current.CaptureMode = settings.CaptureMode;
+                foreach (var prop in typeof(Settings).GetProperties())
+                {
+                    prop.SetValue(Settings.Current, prop.GetValue(settings));
+                }
             }
         }
         public static void Save()

@@ -16,6 +16,7 @@
         <CheckBox Content="Keep CleanShot above all other windows" IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}" Margin="0,0,0,10"/>
         <CheckBox Content="Copy captures to clipboard" IsChecked="{Binding CopyToClipboard, Mode=TwoWay}" Margin="0,0,0,10"/>
         <CheckBox Content="Save captures to disk" IsChecked="{Binding SaveToDisk, Mode=TwoWay}" Margin="0,0,0,10"/>
+        <CheckBox Content="Show tray icon notification" IsChecked="{Binding IsTrayNotificationEnabled, Mode=TwoWay}" Margin="0,0,0,10"/>
         <TextBlock Text="Save Folder:" Margin="0,0,0,5"/>
         <TextBox x:Name="textSaveFolder" Text="{Binding SaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textSaveFolder_LostFocus"/>
         <Button x:Name="buttonBrowse" HorizontalAlignment="Right" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Click="buttonBrowse_Click" ToolTip="Browse" Margin="0,0,0,10">

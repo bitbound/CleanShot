@@ -51,10 +51,14 @@ namespace CleanShot.Windows
 
         private void textSaveFolder_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (!Directory.Exists(textSaveFolder.Text))
+            try
             {
-                MessageBox.Show("The specified directory doesn't exist.", "Invalid Directory", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                textSaveFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                Directory.CreateDirectory(textSaveFolder.Text);
+            }
+            catch
+            {
+                textSaveFolder.Text = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"\CleanShot\Images\");
+                MessageBox.Show("Unable to create the specified directory.", "Invalid Directory", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
