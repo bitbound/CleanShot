@@ -85,6 +85,9 @@
     <Compile Include="Controls\TrayBalloon.xaml.cs">
       <DependentUpon>TrayBalloon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WindowSelectionBorder.xaml.cs">
+      <DependentUpon>WindowSelectionBorder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TrayIcon.cs" />
     <Compile Include="Win32\GDI32.cs" />
     <Compile Include="Win32\User32.cs" />
@@ -103,6 +106,10 @@
       <DependentUpon>Video.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\TrayBalloon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WindowSelectionBorder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

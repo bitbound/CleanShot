@@ -17,6 +17,7 @@ using System.IO;
 using CleanShot.Models;
 using CleanShot.Win32;
 using System.Runtime.InteropServices;
+using CleanShot.Controls;
 
 namespace CleanShot.Windows
 {
@@ -239,6 +240,26 @@ namespace CleanShot.Windows
             App.Current.MainWindow.Visibility = Visibility.Visible;
             this.Close();
         }
-
+        private async void WatchCursor()
+        {
+            new WindowSelectionBorder().Show();
+            while (true)
+            {
+                CheckCursorPos();
+                await Task.Delay(5);
+            }
+        }
+        private void CheckCursorPos()
+        {
+            var point = new System.Drawing.Point();
+            User32.GetCursorPos(out point);
+            var hWin = User32.WindowFromPoint(point);
+            var rect = new User32.RECT();
+            User32.GetWindowRect(hWin, out rect);
+            WindowSelectionBorder.Current.Left = rect.Left;
+            WindowSelectionBorder.Current.Top = rect.Top;
+            WindowSelectionBorder.Current.Height = rect.Height;
+            WindowSelectionBorder.Current.Width = rect.Width;
+        }
     }
 }

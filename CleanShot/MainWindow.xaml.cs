@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -60,6 +60,7 @@ namespace CleanShot
             Settings.Load();
             TrayIcon.Create();
         }
+        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
@@ -108,7 +109,7 @@ namespace CleanShot
         {
             System.Net.WebClient webClient = new System.Net.WebClient();
             System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
-            var result = await httpClient.GetAsync("https://translucency.info/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe");
+            var result = await httpClient.GetAsync("https://translucency.azurewebsites.net/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe");
             var serverVersion = Version.Parse(await result.Content.ReadAsStringAsync());
             var thisVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             if (serverVersion > thisVersion)
@@ -124,7 +125,7 @@ namespace CleanShot
                     try
                     {
                         
-                        await webClient.DownloadFileTaskAsync(new Uri("https://translucency.info/Downloads/CleanShot.exe"), strFilePath);
+                        await webClient.DownloadFileTaskAsync(new Uri("https://translucency.azurewebsites.net/Downloads/CleanShot.exe"), strFilePath);
                     }
                     catch
                     {
