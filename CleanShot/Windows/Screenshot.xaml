@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanShot.Windows"
         mc:Ignorable="d"
-        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="False" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="#02FFFFFF" WindowStartupLocation="CenterScreen"  Height="800" Width="800" Loaded="Window_Loaded" Icon="/CleanShot;component/Assets/Camera.ico" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross">
-    <Grid x:Name="gridMain">
+        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="False" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="#02FFFFFF" WindowStartupLocation="CenterScreen"  Height="800" Width="800" Loaded="Window_Loaded" Icon="/CleanShot;component/Assets/Camera.ico" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross" Padding="0">
+    <Grid x:Name="gridMain" Margin="0">
         <!--<Border x:Name="borderClip">
             <Border.Background>
                 <SolidColorBrush Color="White" Opacity=".4"/>
@@ -22,7 +22,7 @@
                 </CombinedGeometry>
             </Border.Clip>
         </Border>-->
-        <Border x:Name="borderCapture" BorderBrush="#FF6D29A4" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" Background="#3F2948C0"></Border>
+        <Border x:Name="borderCapture" BorderBrush="#FF6D29A4" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed" Background="#3F2948C0" Padding="0"></Border>
         <Label x:Name="labelHeader" Content="Select a window or draw a box." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="WhiteSmoke"/>
     </Grid>
 </Window>

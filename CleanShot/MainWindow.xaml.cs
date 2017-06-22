@@ -41,6 +41,7 @@ namespace CleanShot
             };
             App.Current.Exit += (send, arg) =>
             {
+                TrayIcon.Icon.Dispose();
                 Settings.Save();
             };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
