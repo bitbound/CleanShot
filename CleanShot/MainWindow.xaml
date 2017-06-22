@@ -6,15 +6,12 @@
         xmlns:local="clr-namespace:CleanShot"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.MainWindow"
         mc:Ignorable="d"
-        Title="CleanShot" Height="100" Width="150" ResizeMode="NoResize" Icon="Assets/CompactCamera_Nolan.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing">
+        Title="CleanShot" Height="200" Width="249.333" ResizeMode="NoResize" Icon="Assets/Camera.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing" Background="Black">
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
     <Grid Margin="10">
-        <Button x:Name="buttonCapture" Height="25" Width="80" HorizontalAlignment="Left" VerticalAlignment="Center" Click="buttonCapture_Click">
-            <Image Source="Assets/WindowScreenshot_16x.png" Stretch="None"/>
-        </Button>
-        <Button x:Name="buttonMenu" HorizontalAlignment="Right" VerticalAlignment="Center" Height="25" Width="25" BorderBrush="Transparent" Click="buttonMenu_Click" Background="{x:Null}">
+        <Button x:Name="buttonMenu" HorizontalAlignment="Right" VerticalAlignment="Top" Height="25" Width="25" Cursor="Hand" Click="buttonMenu_Click" Margin="0,10,10,0" Style="{DynamicResource Button_Black_Background}">
             <Button.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="menuUpdate"  Header="Check for Updates" Click="menuUpdate_Click"/>
@@ -22,10 +19,18 @@
                     <MenuItem x:Name="menuAbout" Header="About" Click="menuAbout_Click"/>
                 </ContextMenu>
             </Button.ContextMenu>
-            <Button.OpacityMask>
-                <ImageBrush ImageSource="Assets/HamburgerMenu_16x.png"/>
-            </Button.OpacityMask>
-            <Image Source="Assets/HamburgerMenu_16x.png"></Image>
+            <StackPanel HorizontalAlignment="Center">
+                <Line Stroke="White" X1="0" X2="15" StrokeThickness="2"></Line>
+                <Separator Foreground="Transparent" Background="Transparent"></Separator>
+                <Line Stroke="White" X1="0" X2="15" StrokeThickness="2"></Line>
+                <Separator Foreground="Transparent" Background="Transparent"></Separator>
+                <Line Stroke="White" X1="0" X2="15" StrokeThickness="2"></Line>
+            </StackPanel>
+        </Button>
+        <ToggleButton x:Name="buttonImage" Content="Image" Height="40" Width="80" IsChecked="True" Margin="10,40,133,71" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" />
+        <ToggleButton x:Name="buttonVideo" Content="Video" Height="40" Width="80" Margin="10,85,133,26" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled"/>
+        <Button Height="50" Width="50" Margin="163,58,10,43" BorderThickness="0" Cursor="Hand" Click="buttonCapture_Click" Style="{DynamicResource Button_Black_Background}">
+            <Ellipse Fill="Red" Height="47" Width="47" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
         </Button>
     </Grid>
 </Window>

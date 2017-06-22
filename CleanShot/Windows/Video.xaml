@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanShot.Windows"
         mc:Ignorable="d"
-        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="True" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="{x:Null}" WindowStartupLocation="CenterScreen" Height="800" Width="800" Loaded="Window_Loaded" Icon="/CleanShot;component/Assets/CompactCamera_Nolan.ico" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross" SizeChanged="Window_SizeChanged">
+        Title="CleanShot Screenshot"  WindowStyle="None" Topmost="True" KeyDown="Window_KeyDown" AllowsTransparency="True" Background="{x:Null}" WindowStartupLocation="CenterScreen" Height="800" Width="800" Loaded="Window_Loaded" Icon="/CleanShot;component/Assets/Camera.ico" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" Cursor="Cross" SizeChanged="Window_SizeChanged">
     <Grid x:Name="gridMain">
         <Border x:Name="borderClip">
             <Border.Background>

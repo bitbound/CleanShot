@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace CleanShot
+namespace CleanShot.Classes
 {
     public static class TrayIcon
     {
@@ -20,7 +20,7 @@ namespace CleanShot
                 return;
             }
             Icon = new TaskbarIcon();
-            Icon.IconSource = new BitmapImage(new Uri("pack://application:,,,/Assets/CompactCamera_Nolan.ico"));
+            Icon.IconSource = new BitmapImage(new Uri("pack://application:,,,/Assets/Camera.ico"));
             CreateContextMenu();
             Icon.TrayMouseDoubleClick += (send, arg) => {
                 if (!App.Current.MainWindow.IsVisible)

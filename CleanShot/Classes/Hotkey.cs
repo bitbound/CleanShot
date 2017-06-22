@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Interop;
 
-namespace CleanShot
+namespace CleanShot.Classes
 {
     // Code for Hotkey class derived from here: https://blogs.msdn.microsoft.com/toub/2006/05/03/low-level-keyboard-hook-in-c/
     public static class Hotkey

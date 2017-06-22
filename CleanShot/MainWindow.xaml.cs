@@ -20,6 +20,9 @@ using System.IO;
 using System.Windows.Interop;
 using CleanShot.Windows;
 using CleanShot.Controls;
+using System.Windows.Media.Animation;
+using CleanShot.Classes;
+using System.Windows.Controls.Primitives;
 
 namespace CleanShot
 {
@@ -212,6 +215,13 @@ namespace CleanShot
                 File.AppendAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Log.txt", DateTime.Now.ToString() + "\t" + ex.Message + "\t" + ex.Source + "\t" + ex.StackTrace + Environment.NewLine);
                 ex = ex.InnerException;
             }
+        }
+
+        private void CaptureModeToggled(object sender, RoutedEventArgs e)
+        {
+            buttonImage.IsChecked = false;
+            buttonVideo.IsChecked = false;
+            (sender as ToggleButton).IsChecked = true;
         }
     }
 }

@@ -57,6 +57,11 @@ namespace CleanShot.Win32
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
 
+        [DllImport("gdi32.dll", SetLastError = true)]
+        public static extern bool PtInRegion(IntPtr Region, int X, int Y);
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+
         #endregion
     }
 }
