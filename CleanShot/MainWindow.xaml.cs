@@ -52,6 +52,12 @@ namespace CleanShot
                     proc.Kill();
                 }
             }
+            while (Process.GetProcessesByName("CleanShot").Any(proc=>proc.Id != Process.GetCurrentProcess().Id))
+            {
+                System.Threading.Thread.Sleep(1);
+            }
+            Settings.Load();
+            CheckInstallItems();
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
@@ -61,7 +67,6 @@ namespace CleanShot
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await CheckForUpdates(true);
-            Settings.Load();
             TrayIcon.Create();
         }
         
@@ -205,6 +210,46 @@ namespace CleanShot
             else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
             {
 
+            }
+        }
+        private void CheckInstallItems()
+        {
+            var di = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\");
+            if (!File.Exists(di.FullName + "CleanShot.exe"))
+            {
+                File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, di.FullName + "CleanShot.exe", true);
+            }
+            if (Settings.Current.StartWithWindows)
+            {
+                var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                if (runKey.GetValue("CleanShot") == null)
+                {
+                    runKey.SetValue("CleanShot", @"%appdata%\CleanShot\CleanShot.exe", Microsoft.Win32.RegistryValueKind.ExpandString);
+                }
+            }
+           
+            using (var mrs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CleanShot.Assets.CleanShot.lnk"))
+            {
+                var buffer = new byte[mrs.Length];
+                mrs.Read(buffer, 0, buffer.Length);
+                if (Settings.Current.CreateDesktopShortcut)
+                {
+                    var desktopPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CleanShot.lnk");
+                    if (!File.Exists(desktopPath))
+                    {
+                        File.WriteAllBytes(desktopPath, buffer);
+                    }
+                }
+                if (Settings.Current.CreateStartMenuItem)
+                {
+                    var startDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "CleanShot");
+                    if (!File.Exists(System.IO.Path.Combine(startDir, "CleanShot.lnk")))
+                    {
+                        Directory.CreateDirectory(startDir);
+                        File.WriteAllBytes(System.IO.Path.Combine(startDir, "CleanShot.lnk"), buffer);
+                    }
+                }
+               
             }
         }
         private void WriteToLog(Exception ExMessage)

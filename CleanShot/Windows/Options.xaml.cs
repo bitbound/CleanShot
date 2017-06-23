@@ -40,12 +40,27 @@ namespace CleanShot.Windows
 
         private void buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("This will remove the settings and log files in AppData.  Proceed?", "Remove Data", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show("This will remove the settings and files related to CleanShot.  Proceed?", "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
+                var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                if (runKey.GetValue("CleanShot") != null)
+                {
+                    runKey.DeleteValue("CleanShot");
+                }
+                var desktopPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CleanShot.lnk");
+                if (File.Exists(desktopPath))
+                {
+                    File.Delete(desktopPath);
+                }
+                var startDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "CleanShot");
+                if (Directory.Exists(startDir))
+                {
+                    Directory.Delete(startDir, true);
+                }
                 Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot", true);
                 Settings.Current.Uninstalled = true;
-                this.Close();
+                Application.Current.Shutdown(0);
             }
         }
 
