@@ -34,7 +34,7 @@ namespace CleanShot.Windows
             if (Directory.Exists(browser.SelectedPath))
             {
                 textSaveFolder.Text = browser.SelectedPath;
-                Settings.Current.SaveFolder = browser.SelectedPath;
+                Settings.Current.ImageSaveFolder = browser.SelectedPath;
             }
         }
 

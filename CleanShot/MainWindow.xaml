@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CleanShot"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.MainWindow"
         mc:Ignorable="d"
-        Title="CleanShot" Height="200" Width="249.333" ResizeMode="NoResize" Icon="Assets/Camera.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing" Background="Black">
+        Title="CleanShot" Height="200" Width="250" ResizeMode="NoResize" Icon="Assets/Camera.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing" Background="Black">
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
@@ -27,8 +27,9 @@
                 <Line Stroke="White" X1="0" X2="15" StrokeThickness="2"></Line>
             </StackPanel>
         </Button>
-        <ToggleButton x:Name="buttonImage" Content="Image" Height="40" Width="80" IsChecked="True" Margin="10,40,133,71" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" />
-        <ToggleButton x:Name="buttonVideo" Content="Video" Height="40" Width="80" Margin="10,85,133,26" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled"/>
+        <!--Tag needs to be parsed into Settings.CaptureModes. -->
+        <ToggleButton x:Name="buttonImage" Content="Image" Tag="Image"  Height="40" Width="80" IsChecked="True" Margin="10,40,133,71" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" />
+        <ToggleButton x:Name="buttonVideo" Content="Video" Tag="Video" Height="40" Width="80" Margin="10,85,133,26" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled"/>
         <Button Height="50" Width="50" Margin="163,58,10,43" BorderThickness="0" Cursor="Hand" Click="buttonCapture_Click" Style="{DynamicResource Button_Black_Background}">
             <Ellipse Fill="Red" Height="47" Width="47" VerticalAlignment="Center" HorizontalAlignment="Center"></Ellipse>
         </Button>

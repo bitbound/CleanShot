@@ -61,7 +61,7 @@ namespace CleanShot.Classes
             if (Settings.Current.SaveToDisk)
             {
                 var count = 0;
-                var saveFile = Path.Combine(Settings.Current.SaveFolder, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss"));
+                var saveFile = Path.Combine(Settings.Current.ImageSaveFolder, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss"));
                 if (File.Exists(saveFile + ".png"))
                 {
                     while (File.Exists(saveFile + "_" + count.ToString() + ".png"))
@@ -70,7 +70,7 @@ namespace CleanShot.Classes
                     }
                     saveFile += "_" + count.ToString();
                 }
-                Directory.CreateDirectory(Settings.Current.SaveFolder);
+                Directory.CreateDirectory(Settings.Current.ImageSaveFolder);
                 CaptureBitmap.Save(saveFile + ".png", System.Drawing.Imaging.ImageFormat.Png);
             }
             if (Settings.Current.CopyToClipboard)

@@ -107,7 +107,7 @@ namespace CleanShot.Windows
                         if (Settings.Current.SaveToDisk)
                         {
                             var count = 0;
-                            var saveFile = System.IO.Path.Combine(Settings.Current.SaveFolder, "CleanShot_" + DateTime.Now.ToString().Replace("/", "-").Replace(":", "."));
+                            var saveFile = System.IO.Path.Combine(Settings.Current.ImageSaveFolder, "CleanShot_" + DateTime.Now.ToString().Replace("/", "-").Replace(":", "."));
                             if (File.Exists(saveFile + ".jpg"))
                             {
                                 while (File.Exists(saveFile + "_" + count.ToString() + ".jpg"))

@@ -15,9 +15,9 @@ namespace CleanShot.Classes
         public static TaskbarIcon Icon { get; set; }
         public static void Create()
         {
-            if (Icon != null)
+            if (Icon?.IsDisposed == false)
             {
-                return;
+                Icon.Dispose();
             }
             Icon = new TaskbarIcon();
             Icon.IconSource = new BitmapImage(new Uri("pack://application:,,,/Assets/Camera.ico"));
@@ -26,6 +26,7 @@ namespace CleanShot.Classes
                 if (!App.Current.MainWindow.IsVisible)
                 {
                     App.Current.MainWindow.Show();
+                    TrayIcon.Icon.Dispose();
                 }
             };
             Icon.TrayRightMouseUp += (send, arg) => {
@@ -40,6 +41,7 @@ namespace CleanShot.Classes
             item.Click += (send, arg) =>
             {
                 MainWindow.Current.Show();
+                TrayIcon.Icon.Dispose();
             };
             Icon.ContextMenu.Items.Add(item);
             item = new MenuItem() { Header = "Exit" };

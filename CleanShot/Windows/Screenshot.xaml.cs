@@ -61,6 +61,7 @@ namespace CleanShot.Windows
                 gridMain.Background = new ImageBrush(bi);
             }
             FrameWindowUnderCursor();
+            this.Activate();
         }
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -86,25 +87,39 @@ namespace CleanShot.Windows
             {
                 if (ConfirmTooltip.IsOpen == true)
                 {
-                    try
+                    if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
                     {
-                        await HideSelf();
-                        Capture.SaveCapture(Capture.GetCapture(GetDrawnRegion()));
-                        App.Current.MainWindow.Visibility = Visibility.Visible;
-                        this.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        var thisEx = ex;
-                        var errorMessage = "There was an error capturing the screenshot.  If the issue persists, please contact me with the below error." + Environment.NewLine + Environment.NewLine + "Error: " + ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace;
-                        while (thisEx.InnerException != null)
+                        try
                         {
-                            errorMessage += Environment.NewLine + Environment.NewLine + ex.InnerException?.Message + Environment.NewLine + Environment.NewLine + ex.InnerException?.StackTrace;
-                            thisEx = thisEx.InnerException;
+                            await HideSelf();
+                            Capture.SaveCapture(Capture.GetCapture(GetDrawnRegion()));
+                            App.Current.MainWindow.Visibility = Visibility.Visible;
+                            this.Close();
                         }
-                        System.Windows.MessageBox.Show(errorMessage, "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        App.Current.MainWindow.Visibility = Visibility.Visible;
-                        this.Close();
+                        catch (Exception ex)
+                        {
+                            var thisEx = ex;
+                            var errorMessage = "There was an error capturing the screenshot.  If the issue persists, please contact me with the below error." + Environment.NewLine + Environment.NewLine + "Error: " + ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace;
+                            while (thisEx.InnerException != null)
+                            {
+                                errorMessage += Environment.NewLine + Environment.NewLine + ex.InnerException?.Message + Environment.NewLine + Environment.NewLine + ex.InnerException?.StackTrace;
+                                thisEx = thisEx.InnerException;
+                            }
+                            System.Windows.MessageBox.Show(errorMessage, "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            App.Current.MainWindow.Visibility = Visibility.Visible;
+                            this.Close();
+                        }
+                    }
+                    else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
+                    {
+                        //var job = new Microsoft.Expression.Encoder.ScreenCapture.ScreenCaptureJob();
+                        //var captureRect = GetDrawnRegion();
+                        //job.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(0, (int)captureRect.X), Math.Max(0, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height));
+                        //job.OutputPath = System.IO.Path.Combine(Settings.Current.VideoSaveFolder);
+                        //job.Start();
+                        //await Task.Delay(1000);
+                        //job.Stop();
+                        //var outFilePath = new Microsoft.Expression.Encoder.MediaItem(job.ScreenCaptureFileName);
                     }
                 }
             }

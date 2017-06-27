@@ -41,8 +41,11 @@ namespace CleanShot
             };
             App.Current.Exit += (send, arg) =>
             {
-                TrayIcon.Icon.Dispose();
                 Settings.Save();
+                if (!TrayIcon.Icon.IsDisposed)
+                {
+                    TrayIcon.Icon.Dispose();
+                }
             };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             foreach (var proc in Process.GetProcessesByName("CleanShot"))
@@ -67,15 +70,15 @@ namespace CleanShot
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             await CheckForUpdates(true);
-            TrayIcon.Create();
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            TrayIcon.Create();
             e.Cancel = true;
             if (Settings.Current.IsTrayNotificationEnabled)
             {
-                TrayIcon.Icon.ShowCustomBalloon(new TrayBalloon(), System.Windows.Controls.Primitives.PopupAnimation.Fade, 5000);
+                TrayIcon.Icon.ShowCustomBalloon(new TrayBalloon(), PopupAnimation.Fade, 5000);
             }
             this.Hide();
             base.OnClosed(e);
@@ -85,9 +88,9 @@ namespace CleanShot
             Hotkey.Set();
             base.OnSourceInitialized(e);
         }
-        private async void buttonCapture_Click(object sender, RoutedEventArgs e)
+        private void buttonCapture_Click(object sender, RoutedEventArgs e)
         {
-            await InitiateCapture();
+            InitiateCapture();
         }
         private async void menuUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -199,18 +202,11 @@ namespace CleanShot
             }
         }
 
-        public async Task InitiateCapture()
+        public void InitiateCapture()
         {
-            if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
-            {
-                this.Visibility = Visibility.Collapsed;
-                await Task.Delay(500);
-                new Screenshot().ShowDialog();
-            }
-            else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
-            {
-
-            }
+            this.WindowState = WindowState.Minimized;
+            this.Visibility = Visibility.Collapsed;
+            new Screenshot().ShowDialog();
         }
         private void CheckInstallItems()
         {
@@ -268,6 +264,7 @@ namespace CleanShot
             buttonImage.IsChecked = false;
             buttonVideo.IsChecked = false;
             (sender as ToggleButton).IsChecked = true;
+            Settings.Current.CaptureMode = (Settings.CaptureModes)Enum.Parse(typeof(Settings.CaptureModes), (sender as ToggleButton).Tag.ToString());
         }
     }
 }

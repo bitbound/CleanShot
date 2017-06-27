@@ -11,7 +11,8 @@ namespace CleanShot.Models
     {
         public static Settings Current { get; set; } = new Settings();
 
-        public string SaveFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\CleanShot\\Images\\";
+        public string ImageSaveFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures) + "\\CleanShot\\";
+        public string VideoSaveFolder { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + "\\CleanShot\\";
         public bool SaveToDisk { get; set; } = true;
         public bool CopyToClipboard { get; set; } = true;
         public bool AlwaysOnTop { get; set; } = true;
