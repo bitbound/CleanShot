@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Resources;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -19,6 +20,7 @@ using CleanShot.Win32;
 using System.Runtime.InteropServices;
 using CleanShot.Controls;
 using CleanShot.Classes;
+using Microsoft.Expression.Encoder.ScreenCapture;
 
 namespace CleanShot.Windows
 {
@@ -32,6 +34,7 @@ namespace CleanShot.Windows
         System.Windows.Point StartPoint { get; set; }
         double DpiScale { get; set; } = 1;
         bool ManualRegionSelection { get; set; } = false;
+        ScreenCaptureJob CaptureJob { get; set; }
         public Screenshot()
         {
             InitializeComponent();
@@ -112,14 +115,20 @@ namespace CleanShot.Windows
                     }
                     else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
                     {
-                        //var job = new Microsoft.Expression.Encoder.ScreenCapture.ScreenCaptureJob();
-                        //var captureRect = GetDrawnRegion();
-                        //job.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(0, (int)captureRect.X), Math.Max(0, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height));
-                        //job.OutputPath = System.IO.Path.Combine(Settings.Current.VideoSaveFolder);
-                        //job.Start();
-                        //await Task.Delay(1000);
-                        //job.Stop();
-                        //var outFilePath = new Microsoft.Expression.Encoder.MediaItem(job.ScreenCaptureFileName);
+                        await HideSelf();
+                        CaptureJob = new ScreenCaptureJob();
+                        var captureRect = GetDrawnRegion();
+                        CaptureJob.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(0, (int)captureRect.X), Math.Max(0, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height));
+                        CaptureJob.OutputPath = System.IO.Path.Combine(Settings.Current.VideoSaveFolder);
+                        CaptureJob.ShowCountdown = true;
+                        CaptureJob.Start();
+                        var controls = new System.Windows.Controls.ToolTip();
+                        controls.Content = new CaptureControls() { CaptureJob = this.CaptureJob };
+                        controls.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
+                        controls.PlacementRectangle = captureRect;
+                        controls.IsOpen = true;
+
+                        controls.VerticalOffset = captureRect.Height / 2 + controls.ActualHeight / 2;
                     }
                 }
             }
