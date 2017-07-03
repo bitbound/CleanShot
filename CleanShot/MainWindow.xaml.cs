@@ -202,10 +202,11 @@ namespace CleanShot
             }
         }
 
-        public void InitiateCapture()
+        public async void InitiateCapture()
         {
-            this.WindowState = WindowState.Minimized;
             this.Visibility = Visibility.Collapsed;
+            this.WindowState = WindowState.Minimized;
+            await Task.Delay(1);
             new Screenshot().ShowDialog();
         }
         private void CheckInstallItems()

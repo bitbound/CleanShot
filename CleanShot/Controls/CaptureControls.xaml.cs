@@ -48,7 +48,8 @@ namespace CleanShot.Controls
         {
             CaptureJob.Stop();
             var outFilePath = new Microsoft.Expression.Encoder.MediaItem(CaptureJob.ScreenCaptureFileName);
-            Screenshot.Current.Close();
+            App.Current.MainWindow.Visibility = Visibility.Visible;
+            App.Current.MainWindow.WindowState = WindowState.Normal;
         }
     }
 }

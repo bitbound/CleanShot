@@ -97,6 +97,7 @@ namespace CleanShot.Windows
                             await HideSelf();
                             Capture.SaveCapture(Capture.GetCapture(GetDrawnRegion()));
                             App.Current.MainWindow.Visibility = Visibility.Visible;
+                            App.Current.MainWindow.WindowState = WindowState.Normal;
                             this.Close();
                         }
                         catch (Exception ex)
@@ -110,6 +111,7 @@ namespace CleanShot.Windows
                             }
                             System.Windows.MessageBox.Show(errorMessage, "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             App.Current.MainWindow.Visibility = Visibility.Visible;
+                            App.Current.MainWindow.WindowState = WindowState.Normal;
                             this.Close();
                         }
                     }
@@ -118,7 +120,7 @@ namespace CleanShot.Windows
                         await HideSelf();
                         CaptureJob = new ScreenCaptureJob();
                         var captureRect = GetDrawnRegion();
-                        CaptureJob.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(0, (int)captureRect.X), Math.Max(0, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height));
+                        CaptureJob.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(0, (int)captureRect.X), Math.Max(0, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width - ((int)captureRect.Width % 4)), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height) - ((int)captureRect.Height % 4));
                         CaptureJob.OutputPath = System.IO.Path.Combine(Settings.Current.VideoSaveFolder);
                         CaptureJob.ShowCountdown = true;
                         CaptureJob.Start();
@@ -127,8 +129,8 @@ namespace CleanShot.Windows
                         controls.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
                         controls.PlacementRectangle = captureRect;
                         controls.IsOpen = true;
-
                         controls.VerticalOffset = captureRect.Height / 2 + controls.ActualHeight / 2;
+                        this.Close();
                     }
                 }
             }
