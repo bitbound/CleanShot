@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using CleanShot.Controls;
 using CleanShot.Classes;
 using Microsoft.Expression.Encoder.ScreenCapture;
+using System.Windows.Controls.Primitives;
 
 namespace CleanShot.Windows
 {
@@ -35,6 +36,7 @@ namespace CleanShot.Windows
         double DpiScale { get; set; } = 1;
         bool ManualRegionSelection { get; set; } = false;
         ScreenCaptureJob CaptureJob { get; set; }
+        public Bitmap BackgroundImage { get; set; }
         public Screenshot()
         {
             InitializeComponent();
@@ -44,27 +46,39 @@ namespace CleanShot.Windows
         {
             DpiScale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
             var screen = SystemInformation.VirtualScreen;
-            var background = Capture.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height));
             labelHeader.Visibility = Visibility.Visible;
             borderCapture.Visibility = Visibility.Visible;
             this.Width = screen.Width;
             this.Height = screen.Height;
             this.Left = screen.Left;
             this.Top = screen.Top;
-
-            using (var ms = new MemoryStream())
+            if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
             {
-                background.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.StreamSource = ms;
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.EndInit();
-                bi.Freeze();
-                gridMain.Background = new ImageBrush(bi);
+                using (var ms = new MemoryStream())
+                {
+                    BackgroundImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    var bi = new BitmapImage();
+                    bi.BeginInit();
+                    bi.StreamSource = ms;
+                    bi.CacheOption = BitmapCacheOption.OnLoad;
+                    bi.EndInit();
+                    bi.Freeze();
+                    gridMain.Background = new ImageBrush(bi);
+                }
             }
             FrameWindowUnderCursor();
             this.Activate();
+        }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (CaptureControls.Current?.IsVisible != true)
+            {
+                MainWindow.Current.WindowState = WindowState.Normal;
+                if (Editor.Current.IsVisible)
+                {
+                    Editor.Current.Activate();
+                }
+            }
         }
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -78,13 +92,26 @@ namespace CleanShot.Windows
                 }
                 else
                 {
-                    App.Current.MainWindow.Visibility = Visibility.Visible;
                     this.Close();
                 }
             }
         }
 
-        private async void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                if (ConfirmTooltip.IsOpen)
+                {
+                    ConfirmTooltip.IsOpen = false;
+                }
+                StartPoint = e.GetPosition(this);
+            }
+            
+        }
+
+        private async void Window_MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Right)
             {
@@ -96,8 +123,6 @@ namespace CleanShot.Windows
                         {
                             await HideSelf();
                             Capture.SaveCapture(Capture.GetCapture(GetDrawnRegion()));
-                            App.Current.MainWindow.Visibility = Visibility.Visible;
-                            App.Current.MainWindow.WindowState = WindowState.Normal;
                             this.Close();
                         }
                         catch (Exception ex)
@@ -110,8 +135,6 @@ namespace CleanShot.Windows
                                 thisEx = thisEx.InnerException;
                             }
                             System.Windows.MessageBox.Show(errorMessage, "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            App.Current.MainWindow.Visibility = Visibility.Visible;
-                            App.Current.MainWindow.WindowState = WindowState.Normal;
                             this.Close();
                         }
                     }
@@ -120,34 +143,20 @@ namespace CleanShot.Windows
                         await HideSelf();
                         CaptureJob = new ScreenCaptureJob();
                         var captureRect = GetDrawnRegion();
-                        CaptureJob.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(0, (int)captureRect.X), Math.Max(0, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width - ((int)captureRect.Width % 4)), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height) - ((int)captureRect.Height % 4));
+                        CaptureJob.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(SystemInformation.VirtualScreen.Left, (int)captureRect.X), Math.Max(SystemInformation.VirtualScreen.Top, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width - ((int)captureRect.Width % 4)), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height) - ((int)captureRect.Height % 4));
                         CaptureJob.OutputPath = System.IO.Path.Combine(Settings.Current.VideoSaveFolder);
                         CaptureJob.ShowCountdown = true;
+                        CaptureJob.CaptureMouseCursor = true;
                         CaptureJob.Start();
-                        var controls = new System.Windows.Controls.ToolTip();
-                        controls.Content = new CaptureControls() { CaptureJob = this.CaptureJob };
-                        controls.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
-                        controls.PlacementRectangle = captureRect;
-                        controls.IsOpen = true;
-                        controls.VerticalOffset = captureRect.Height / 2 + controls.ActualHeight / 2;
+                        var controls = CaptureControls.Create(this.CaptureJob);
+                        controls.Top = Math.Min(captureRect.Bottom + 5, Screen.FromPoint(System.Windows.Forms.Cursor.Position).WorkingArea.Bottom - controls.Height);
+                        controls.Left = captureRect.Left + (captureRect.Width / 2) - (controls.Width / 2);
+                        controls.Show();
                         this.Close();
                     }
                 }
             }
             else if (e.ChangedButton == MouseButton.Left)
-            {
-                if (ConfirmTooltip.IsOpen)
-                {
-                    ConfirmTooltip.IsOpen = false;
-                }
-                StartPoint = e.GetPosition(this);
-            }
-            
-        }
-
-        private void Window_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
             {
                 ManualRegionSelection = true;
                 ConfirmTooltip.Content = "Right-click to confirm capture region.  Press Esc to cancel.";
@@ -187,7 +196,7 @@ namespace CleanShot.Windows
             borderCapture.Visibility = Visibility.Collapsed;
             while (labelHeader.IsVisible || ConfirmTooltip.IsVisible || borderCapture.IsVisible)
             {
-                await Task.Delay(1);
+                await Task.Delay(100);
             }
         }
         private async void FrameWindowUnderCursor()
@@ -235,5 +244,7 @@ namespace CleanShot.Windows
                 await Task.Delay(100);
             }
         }
+
+    
     }
 }

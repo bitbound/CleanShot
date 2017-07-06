@@ -6,26 +6,40 @@
         xmlns:local="clr-namespace:CleanShot.Windows"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.Windows.Options"
         mc:Ignorable="d"
-        Title="CleanShot Options" Height="275" Width="300" Closing="Window_Closing" Icon="/CleanShot;component/Assets/Camera.ico">
+        Title="CleanShot Options" Height="325" Width="300" Closing="Window_Closing" Icon="/CleanShot;component/Assets/Camera.ico">
 
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
-
-    <StackPanel Margin="10">
-        <CheckBox Content="Keep CleanShot above all other windows" IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}" Margin="0,0,0,10"/>
-        <CheckBox Content="Copy captures to clipboard" IsChecked="{Binding CopyToClipboard, Mode=TwoWay}" Margin="0,0,0,10"/>
-        <CheckBox Content="Save captures to disk" IsChecked="{Binding SaveToDisk, Mode=TwoWay}" Margin="0,0,0,10"/>
-        <CheckBox Content="Show tray icon notification" IsChecked="{Binding IsTrayNotificationEnabled, Mode=TwoWay}" Margin="0,0,0,10"/>
-        <TextBlock Text="Save Folder:" Margin="0,0,0,5"/>
-        <TextBox x:Name="textSaveFolder" Text="{Binding SaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textSaveFolder_LostFocus"/>
-        <Button x:Name="buttonBrowse" HorizontalAlignment="Right" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Click="buttonBrowse_Click" ToolTip="Browse" Margin="0,0,0,10">
-            <Image Source="/CleanShot;component/Assets/Folder_32xMD.png">
-                <Image.OpacityMask>
-                    <ImageBrush ImageSource="/CleanShot;component/Assets/Folder_32xMD.png"/>
-                </Image.OpacityMask>
-            </Image>
-        </Button>
-        <Button x:Name="buttonUninstall" Content="Uninstall" Padding="5" HorizontalAlignment="Left" ToolTip="Remove data folder and files from AppData." Click="buttonUninstall_Click"/>
-    </StackPanel>
+    <ScrollViewer Margin="0,10,0,0">
+        <StackPanel Margin="10">
+            <CheckBox Content="Keep CleanShot above all other windows" IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <CheckBox Content="Start CleanShot with Windows" IsChecked="{Binding StartWithWindows, Mode=TwoWay}" Margin="0,0,0,10" Click="StartWithWindows_Click"/>
+            <CheckBox Content="Create desktop shortcut" IsChecked="{Binding CreateDesktopShortcut, Mode=TwoWay}" Margin="0,0,0,10" Click="CreateDesktopShortcut_Click"/>
+            <CheckBox Content="Create Start menu shortcut" IsChecked="{Binding CreateStartMenuItem, Mode=TwoWay}" Margin="0,0,0,10" Click="CreateStartShortcut_Click"/>
+            <CheckBox Content="Copy captures to clipboard" IsChecked="{Binding CopyToClipboard, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <CheckBox Content="Save captures to disk" IsChecked="{Binding SaveToDisk, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <CheckBox Content="Open captures in editor" IsChecked="{Binding OpenInEditor, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <CheckBox Content="Show sent-to-tray notification" IsChecked="{Binding IsTrayNotificationEnabled, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <TextBlock Text="Image Save Folder:" Margin="0,0,0,5"/>
+            <TextBox x:Name="textImageSaveFolder" Text="{Binding ImageSaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textImageSaveFolder_LostFocus"/>
+            <Button x:Name="buttonBrowseImage" HorizontalAlignment="Right" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Click="buttonBrowseImage_Click" ToolTip="Browse">
+                <Image Source="/CleanShot;component/Assets/Folder_32xMD.png">
+                    <Image.OpacityMask>
+                        <ImageBrush ImageSource="/CleanShot;component/Assets/Folder_32xMD.png"/>
+                    </Image.OpacityMask>
+                </Image>
+            </Button>
+            <TextBlock Text="Video Save Folder:" Margin="0,0,0,5"/>
+            <TextBox x:Name="textVideoSaveFolder" Text="{Binding VideoSaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textVideoSaveFolder_LostFocus"/>
+            <Button x:Name="buttonBrowseVideo" HorizontalAlignment="Right" Height="20" Width="20" Background="{x:Null}" BorderBrush="{x:Null}" Click="buttonBrowseVideo_Click" ToolTip="Browse" Margin="0,0,0,10">
+                <Image Source="/CleanShot;component/Assets/Folder_32xMD.png">
+                    <Image.OpacityMask>
+                        <ImageBrush ImageSource="/CleanShot;component/Assets/Folder_32xMD.png"/>
+                    </Image.OpacityMask>
+                </Image>
+            </Button>
+            <Button x:Name="buttonUninstall" Content="Uninstall" Padding="5" HorizontalAlignment="Left" ToolTip="Remove data folder and files from AppData." Click="buttonUninstall_Click"/>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

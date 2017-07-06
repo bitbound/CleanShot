@@ -1,4 +1,5 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
+﻿using CleanShot.Models;
+using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,10 +27,17 @@ namespace CleanShot.Classes
                 if (!App.Current.MainWindow.IsVisible)
                 {
                     App.Current.MainWindow.Show();
-                    TrayIcon.Icon.Dispose();
                 }
             };
             Icon.TrayRightMouseUp += (send, arg) => {
+                if (MainWindow.Current.IsVisible)
+                {
+                    (Icon.ContextMenu.Items[0] as MenuItem).Visibility = System.Windows.Visibility.Collapsed;
+                }
+                else
+                {
+                    (Icon.ContextMenu.Items[0] as MenuItem).Visibility = System.Windows.Visibility.Visible;
+                }
                 Icon.ContextMenu.IsOpen = true;
             };
         }
@@ -37,11 +45,25 @@ namespace CleanShot.Classes
         private static void CreateContextMenu()
         {
             Icon.ContextMenu = new ContextMenu();
-            var item = new MenuItem() { Header = "Show" };
+            MenuItem item;
+            item = new MenuItem() { Header = "Show" };
             item.Click += (send, arg) =>
             {
                 MainWindow.Current.Show();
-                TrayIcon.Icon.Dispose();
+            };
+            Icon.ContextMenu.Items.Add(item);
+            item = new MenuItem() { Header = "Capture Image" };
+            item.Click += (send, arg) =>
+            {
+                Settings.Current.CaptureMode = Settings.CaptureModes.Image;
+                MainWindow.Current.InitiateCapture();
+            };
+            Icon.ContextMenu.Items.Add(item);
+            item = new MenuItem() { Header = "Capture Video" };
+            item.Click += (send, arg) =>
+            {
+                Settings.Current.CaptureMode = Settings.CaptureModes.Video;
+                MainWindow.Current.InitiateCapture();
             };
             Icon.ContextMenu.Items.Add(item);
             item = new MenuItem() { Header = "Exit" };

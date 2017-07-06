@@ -27,17 +27,10 @@ namespace CleanShot.Windows
             DataContext = Settings.Current;
         }
 
-        private void buttonBrowse_Click(object sender, RoutedEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var browser = new System.Windows.Forms.FolderBrowserDialog();
-            browser.ShowDialog();
-            if (Directory.Exists(browser.SelectedPath))
-            {
-                textSaveFolder.Text = browser.SelectedPath;
-                Settings.Current.ImageSaveFolder = browser.SelectedPath;
-            }
+            Settings.Save();
         }
-
         private void buttonUninstall_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show("This will remove the settings and files related to CleanShot.  Proceed?", "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -64,22 +57,124 @@ namespace CleanShot.Windows
             }
         }
 
-        private void textSaveFolder_LostFocus(object sender, RoutedEventArgs e)
+        private void textImageSaveFolder_LostFocus(object sender, RoutedEventArgs e)
         {
             try
             {
-                Directory.CreateDirectory(textSaveFolder.Text);
+                Directory.CreateDirectory(textImageSaveFolder.Text);
             }
             catch
             {
-                textSaveFolder.Text = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"\CleanShot\Images\");
+                textImageSaveFolder.Text = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"\CleanShot\Images\");
+                MessageBox.Show("Unable to create the specified directory.", "Invalid Directory", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        private void textVideoSaveFolder_LostFocus(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Directory.CreateDirectory(textVideoSaveFolder.Text);
+            }
+            catch
+            {
+                textVideoSaveFolder.Text = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"\CleanShot\Images\");
                 MessageBox.Show("Unable to create the specified directory.", "Invalid Directory", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void buttonBrowseVideo_Click(object sender, RoutedEventArgs e)
         {
-            Settings.Save();
+
+            var browser = new System.Windows.Forms.FolderBrowserDialog();
+            browser.ShowDialog();
+            if (Directory.Exists(browser.SelectedPath))
+            {
+                textVideoSaveFolder.Text = browser.SelectedPath;
+                Settings.Current.ImageSaveFolder = browser.SelectedPath;
+            }
+        }
+
+        private void buttonBrowseImage_Click(object sender, RoutedEventArgs e)
+        {
+
+            var browser = new System.Windows.Forms.FolderBrowserDialog();
+            browser.ShowDialog();
+            if (Directory.Exists(browser.SelectedPath))
+            {
+                textImageSaveFolder.Text = browser.SelectedPath;
+                Settings.Current.ImageSaveFolder = browser.SelectedPath;
+            }
+        }
+
+        private void StartWithWindows_Click(object sender, RoutedEventArgs e)
+        {
+            var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+            if ((sender as CheckBox).IsChecked == true)
+            {
+                if (runKey.GetValue("CleanShot") == null)
+                {
+                    runKey.SetValue("CleanShot", @"""%appdata%\CleanShot\CleanShot.exe"" -hidden", Microsoft.Win32.RegistryValueKind.ExpandString);
+                }
+            }
+            else
+            {
+                if (runKey.GetValue("CleanShot") != null)
+                {
+                    runKey.DeleteValue("CleanShot");
+                }
+            }
+        }
+
+        private void CreateDesktopShortcut_Click(object sender, RoutedEventArgs e)
+        {
+            var desktopPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CleanShot.lnk");
+            if ((sender as CheckBox).IsChecked == true)
+            {
+                using (var mrs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CleanShot.Assets.CleanShot.lnk"))
+                {
+                    var buffer = new byte[mrs.Length];
+                    mrs.Read(buffer, 0, buffer.Length);
+                    if (!File.Exists(desktopPath))
+                    {
+                        File.WriteAllBytes(desktopPath, buffer);
+                    }
+                }
+            }
+            else
+            {
+                if (File.Exists(desktopPath))
+                {
+                    File.Delete(desktopPath);
+                }
+            }
+        }
+        private void CreateStartShortcut_Click(object sender, RoutedEventArgs e)
+        {
+            var startDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "CleanShot");
+            if ((sender as CheckBox).IsChecked == true)
+            {
+                using (var mrs = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CleanShot.Assets.CleanShot.lnk"))
+                {
+                    var buffer = new byte[mrs.Length];
+                    mrs.Read(buffer, 0, buffer.Length);
+                    if (Settings.Current.CreateStartMenuItem)
+                    {
+                        if (!File.Exists(System.IO.Path.Combine(startDir, "CleanShot.lnk")))
+                        {
+                            Directory.CreateDirectory(startDir);
+                            File.WriteAllBytes(System.IO.Path.Combine(startDir, "CleanShot.lnk"), buffer);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (Directory.Exists(startDir))
+                {
+                    Directory.Delete(startDir, true);
+                }
+            }
+            
         }
     }
 }

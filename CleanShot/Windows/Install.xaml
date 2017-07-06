@@ -1,0 +1,13 @@
+﻿<Window x:Class="CleanShot.Windows.Install"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CleanShot.Windows"
+        mc:Ignorable="d"
+        Title="CleanShot Expression Encoder Installer" WindowStyle="None" ResizeMode="NoResize" Height="75" Width="200" Background="Black" MouseLeftButtonDown="Window_MouseLeftButtonDown" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" BorderBrush="LightGray" BorderThickness="1">
+    <Grid>
+        <TextBlock x:Name="textProcess" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">Downloading</TextBlock>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40,0,0" Width="150" Height="20" Background="{x:Null}" Foreground="#FF5F95C3"></ProgressBar>
+    </Grid>
+</Window>

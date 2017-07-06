@@ -1,0 +1,25 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CleanShot.Windows"
+        xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.Windows.Meme"
+        mc:Ignorable="d"
+        Title="Meme Generator" Height="350" Width="300" Background="Black" Icon="/CleanShot;component/Assets/Camera.ico" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+    <Window.DataContext>
+        <Models:Settings/>
+    </Window.DataContext>
+    <Grid>
+        <StackPanel Margin="10,10,10,50">
+            <TextBlock Text="Font:" Foreground="White" Margin="0,0,0,5"/>
+            <ComboBox x:Name="comboFont" Margin="0,0,0,25"></ComboBox>
+            <TextBlock Text="Top Text:" Foreground="White" Margin="0,0,0,5"/>
+            <TextBox x:Name="textTop" TextWrapping="Wrap" AcceptsReturn="True" Height="50" Margin="0,0,0,25"/>
+            <TextBlock Text="Bottom Text:" Foreground="White"  Margin="0,0,0,5"/>
+            <TextBox x:Name="textBottom" TextWrapping="Wrap" AcceptsReturn="True" Height="50"/>
+        </StackPanel>
+        <Button x:Name="buttonOK" Content="OK" Margin="0,0,80,10" HorizontalAlignment="Right" Width="50" Height="20" VerticalAlignment="Bottom" Style="{DynamicResource Dark_Buttons}" Click="buttonOK_Click"/>
+        <Button x:Name="buttonCancel" Content="Cancel" Margin="0,0,10,10" HorizontalAlignment="Right" Width="50" Height="20" VerticalAlignment="Bottom" Style="{DynamicResource Dark_Buttons}" Click="buttonCancel_Click"/>
+    </Grid>
+</Window>

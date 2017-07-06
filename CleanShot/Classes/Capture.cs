@@ -1,5 +1,7 @@
-﻿using CleanShot.Models;
+﻿using CleanShot.Controls;
+using CleanShot.Models;
 using CleanShot.Win32;
+using CleanShot.Windows;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 
 namespace CleanShot.Classes
@@ -72,10 +75,19 @@ namespace CleanShot.Classes
                 }
                 Directory.CreateDirectory(Settings.Current.ImageSaveFolder);
                 CaptureBitmap.Save(saveFile + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                TrayIcon.Icon.ShowCustomBalloon(new CaptureFileBalloon(), PopupAnimation.Fade, 5000);
             }
             if (Settings.Current.CopyToClipboard)
             {
                 System.Windows.Forms.Clipboard.SetImage(CaptureBitmap);
+                if (!Settings.Current.SaveToDisk)
+                {
+                    TrayIcon.Icon.ShowCustomBalloon(new CaptureClipboardBalloon(), PopupAnimation.Fade, 5000);
+                }
+            }
+            if (Settings.Current.OpenInEditor)
+            {
+                Editor.Create(CaptureBitmap);
             }
         }
     }

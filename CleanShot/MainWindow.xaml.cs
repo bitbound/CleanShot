@@ -14,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using CleanShot.Models;
 using System.IO;
 using System.Windows.Interop;
@@ -23,12 +22,10 @@ using CleanShot.Controls;
 using System.Windows.Media.Animation;
 using CleanShot.Classes;
 using System.Windows.Controls.Primitives;
+using System.Net;
 
 namespace CleanShot
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public static MainWindow Current { get; set; }
@@ -59,8 +56,6 @@ namespace CleanShot
             {
                 System.Threading.Thread.Sleep(1);
             }
-            Settings.Load();
-            CheckInstallItems();
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
@@ -69,19 +64,24 @@ namespace CleanShot
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (Environment.CommandLine.Contains("-hidden"))
+            {
+                this.Hide();
+            }
+            Settings.Load();
+            CheckInstallItems();
+            TrayIcon.Create();
             await CheckForUpdates(true);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            TrayIcon.Create();
             e.Cancel = true;
             if (Settings.Current.IsTrayNotificationEnabled)
             {
                 TrayIcon.Icon.ShowCustomBalloon(new TrayBalloon(), PopupAnimation.Fade, 5000);
             }
             this.Hide();
-            base.OnClosed(e);
         }
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -91,6 +91,20 @@ namespace CleanShot
         private void buttonCapture_Click(object sender, RoutedEventArgs e)
         {
             InitiateCapture();
+        }
+        private void menuOpenImage_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.InitialDirectory = Settings.Current.ImageSaveFolder;
+            dialog.AddExtension = true;
+            dialog.Filter = "Image Files (*.png;*.jpg)|*.png;*.jpg";
+            dialog.DefaultExt = ".png";
+            dialog.ShowDialog();
+            if (!String.IsNullOrWhiteSpace(dialog.FileName))
+            {
+                var bitmap = (Bitmap)Bitmap.FromFile(dialog.FileName);
+                Editor.Create(bitmap);
+            }
         }
         private async void menuUpdate_Click(object sender, RoutedEventArgs e)
         {
@@ -111,7 +125,10 @@ namespace CleanShot
             about.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             about.ShowDialog();
         }
-
+        private void menuExit_Click(object sender, RoutedEventArgs e)
+        {
+            App.Current.Shutdown(0);
+        }
         private void buttonMenu_Click(object sender, RoutedEventArgs e)
         {
             buttonMenu.ContextMenu.IsOpen = true;
@@ -204,10 +221,30 @@ namespace CleanShot
 
         public async void InitiateCapture()
         {
-            this.Visibility = Visibility.Collapsed;
+            if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
+            {
+                var expKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Expression\Encoder\4.0", false);
+                if (expKey == null)
+                {
+                    var result = System.Windows.MessageBox.Show("The video recording feature requires Microsoft's Expression Encoder 4 SDK.  Would you like to download and install it now (~25MB)?", "Expression Encoder Required", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        var install = new Install();
+                        install.Owner = this;
+                        install.ShowDialog();
+                    }
+                    return;
+                }
+            }
+            var win = new Screenshot();
             this.WindowState = WindowState.Minimized;
-            await Task.Delay(1);
-            new Screenshot().ShowDialog();
+            await Task.Delay(500);
+            if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
+            {
+                var screen = SystemInformation.VirtualScreen;
+                win.BackgroundImage = Capture.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height));
+            }
+            win.ShowDialog();
         }
         private void CheckInstallItems()
         {
@@ -221,7 +258,7 @@ namespace CleanShot
                 var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
                 if (runKey.GetValue("CleanShot") == null)
                 {
-                    runKey.SetValue("CleanShot", @"%appdata%\CleanShot\CleanShot.exe", Microsoft.Win32.RegistryValueKind.ExpandString);
+                    runKey.SetValue("CleanShot", @"""%appdata%\CleanShot\CleanShot.exe"" -hidden", Microsoft.Win32.RegistryValueKind.ExpandString);
                 }
             }
            
@@ -266,6 +303,16 @@ namespace CleanShot
             buttonVideo.IsChecked = false;
             (sender as ToggleButton).IsChecked = true;
             Settings.Current.CaptureMode = (Settings.CaptureModes)Enum.Parse(typeof(Settings.CaptureModes), (sender as ToggleButton).Tag.ToString());
+        }
+
+        private void buttonCapture_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ellipseCaptureBackground.Fill = new SolidColorBrush(Colors.AliceBlue);
+        }
+
+        private void buttonCapture_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ellipseCaptureBackground.Fill = null;
         }
     }
 }

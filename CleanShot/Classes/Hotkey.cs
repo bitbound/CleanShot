@@ -1,4 +1,5 @@
-﻿using CleanShot.Windows;
+﻿using CleanShot.Models;
+using CleanShot.Windows;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -51,6 +52,7 @@ namespace CleanShot.Classes
                 {
                     if (Screenshot.Current?.IsVisible != true)
                     {
+                        Settings.Current.CaptureMode = Settings.CaptureModes.Image;
 #pragma warning disable
                         MainWindow.Current.InitiateCapture();
 #pragma warning restore
@@ -59,9 +61,14 @@ namespace CleanShot.Classes
                 }
                 else if (vkCode == ScrollLock)
                 {
-                    // TODO: Video capture.
-                    MessageBox.Show("If we had video capture ready, it'd be happening now.", "Video Capture", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return new IntPtr(1);
+                    if (Screenshot.Current?.IsVisible != true)
+                    {
+                        Settings.Current.CaptureMode = Settings.CaptureModes.Video;
+#pragma warning disable
+                        MainWindow.Current.InitiateCapture();
+#pragma warning restore
+                        return new IntPtr(1);
+                    }
                 }
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
