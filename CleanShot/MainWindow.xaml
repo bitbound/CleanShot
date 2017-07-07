@@ -31,8 +31,8 @@
         </Button>
         <!--Tag needs to be parsed into Settings.CaptureModes. -->
         <ToggleButton x:Name="buttonImage" Content="Image" Tag="Image" Height="40" Width="80" IsChecked="True" Margin="10,40,0,0" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Capture a still image (Shortcut Key: Print Screen)" />
-        <ToggleButton x:Name="buttonVideo" Content="Video" Tag="Video" Height="40" Width="80" Margin="10,85,0,0" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <Button Margin="0,58,5,0" BorderThickness="0" Cursor="Hand" Click="buttonCapture_Click" Style="{DynamicResource Transparent_Buttons}" HorizontalAlignment="Right" Width="50" Height="50" VerticalAlignment="Top" MouseEnter="buttonCapture_MouseEnter" MouseLeave="buttonCapture_MouseLeave" ToolTip="Record a video (Shortcut Key: Scroll Lock)">
+        <ToggleButton x:Name="buttonVideo" Content="Video" Tag="Video" Height="40" Width="80" Margin="10,85,0,0" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Record a video (Shortcut Key: Scroll Lock)" />
+        <Button Margin="0,58,5,0" BorderThickness="0" Cursor="Hand" Click="buttonCapture_Click" Style="{DynamicResource Transparent_Buttons}" HorizontalAlignment="Right" Width="50" Height="50" VerticalAlignment="Top" MouseEnter="buttonCapture_MouseEnter" MouseLeave="buttonCapture_MouseLeave">
             <Grid>
                 <Ellipse x:Name="ellipseCaptureBackground" Margin="5">
                 </Ellipse>
