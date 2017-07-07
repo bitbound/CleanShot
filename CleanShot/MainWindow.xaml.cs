@@ -62,7 +62,6 @@ namespace CleanShot
             this.DataContext = Settings.Current;
             WPF_Auto_Update.Updater.ServiceURI = "https://translucency.azurewebsites.net/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
             WPF_Auto_Update.Updater.RemoteFileURI = "https://translucency.azurewebsites.net/Downloads/CleanShot.exe";
-            WPF_Auto_Update.Updater.CheckCommandLineArgs();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -74,6 +73,7 @@ namespace CleanShot
             Settings.Load();
             CheckInstallItems();
             TrayIcon.Create();
+            WPF_Auto_Update.Updater.CheckCommandLineArgs();
             await WPF_Auto_Update.Updater.CheckForUpdates(true);
         }
         
