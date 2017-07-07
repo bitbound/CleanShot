@@ -72,6 +72,7 @@ namespace CleanShot.Windows
             }
             EditedImage = (Bitmap)OriginalImage.Clone();
             Graphic = Graphics.FromImage(EditedImage);
+            Graphic.SmoothingMode = SmoothingMode.AntiAlias;
             int pointSize = 1;
             Font font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
             SizeF lastMeasurement = SizeF.Empty;
