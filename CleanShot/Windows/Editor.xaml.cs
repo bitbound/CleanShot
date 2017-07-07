@@ -152,13 +152,22 @@ namespace CleanShot.Windows
             popup.BorderBrush = new SolidColorBrush(Colors.LightGray);
             popup.BorderThickness = new Thickness(2);
             popup.Background = new SolidColorBrush(Colors.Black);
-            popup.Content = new TextBlock() { Text = "Uploading image...", Foreground = new SolidColorBrush(Colors.White), FontSize = 20, Margin = new Thickness(5) };
+            var stack = new StackPanel();
+            stack.Margin = new Thickness(5);
+            var text = new TextBlock() { Text = "Uploading image...", Foreground = new SolidColorBrush(Colors.White), FontSize = 20, Margin = new Thickness(0, 5, 0, 5) };
+            var progress = new ProgressBar() { Foreground = Foreground = new SolidColorBrush(Colors.SteelBlue), Margin = new Thickness(0, 5, 0, 5), Height = 15 };
+            stack.Children.Add(text);
+            stack.Children.Add(progress);
+            popup.Content = stack;
             popup.PlacementTarget = this;
             popup.Placement = PlacementMode.Center;
             popup.IsOpen = true;
             var savePath = Path.Combine(Path.GetTempPath(), "CleanShot_Image.png");
             EditedImage.Save(savePath, ImageFormat.Png);
             var client = new System.Net.WebClient();
+            client.UploadProgressChanged += (send, arg) => {
+                progress.Value = arg.ProgressPercentage;
+            };
             var response = await client.UploadFileTaskAsync(new Uri("https://translucency.azurewebsites.net/Services/Downloader"), savePath);
             var strResponse = Encoding.UTF8.GetString(response);
             popup.IsOpen = false;
