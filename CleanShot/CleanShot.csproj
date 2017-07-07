@@ -83,13 +83,17 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPF-Auto-Update, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPF_Auto_Update.1.2.0\lib\net452\WPF-Auto-Update.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Classes\Capture.cs" />
+    <Compile Include="Classes\Screenshot.cs" />
+    <Compile Include="Classes\Video.cs" />
     <Compile Include="Controls\CaptureClipboardBalloon.xaml.cs">
       <DependentUpon>CaptureClipboardBalloon.xaml</DependentUpon>
     </Compile>
@@ -123,8 +127,8 @@
     <Compile Include="Windows\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Screenshot.xaml.cs">
-      <DependentUpon>Screenshot.xaml</DependentUpon>
+    <Compile Include="Windows\Capture.xaml.cs">
+      <DependentUpon>Capture.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Classes\Hotkey.cs" />
@@ -180,7 +184,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\Screenshot.xaml">
+    <Page Include="Windows\Capture.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

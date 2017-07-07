@@ -29,9 +29,7 @@ namespace CleanShot.Windows
         {
             foreach (var family in System.Drawing.FontFamily.Families)
             {
-                var combo = new ComboBoxItem();
-                combo.Content = family.Name;
-                comboFont.Items.Add(combo);
+                comboFont.Items.Add(family.Name);
             }
         }
         private void buttonOK_Click(object sender, RoutedEventArgs e)

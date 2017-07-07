@@ -1,4 +1,5 @@
-﻿using Microsoft.Expression.Encoder.ScreenCapture;
+﻿using CleanShot.Classes;
+using Microsoft.Expression.Encoder.ScreenCapture;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,21 +72,7 @@ namespace CleanShot.Windows
             buttonResume.IsEnabled = false;
             buttonPause.IsEnabled = false;
             CaptureJob.Stop();
-            var mediaItem = new Microsoft.Expression.Encoder.MediaItem(CaptureJob.ScreenCaptureFileName);
-            var encodeJob = new Microsoft.Expression.Encoder.Job();
-            encodeJob.OutputDirectory = CaptureJob.OutputPath;
-            encodeJob.CreateSubfolder = false;
-            encodeJob.MediaItems.Add(mediaItem);
-            mediaItem.OutputFormat = new Microsoft.Expression.Encoder.WindowsMediaOutputFormat()
-            {
-                VideoProfile = new Microsoft.Expression.Encoder.Profiles.AdvancedVC1VideoProfile()
-                {
-                    Size = CaptureJob.CaptureRectangle.Size
-                }
-            };
-            encodeJob.Encode();
-            System.Diagnostics.Process.Start("explorer.exe", encodeJob.ActualOutputDirectory);
-            File.Delete(CaptureJob.ScreenCaptureFileName);
+            Video.Encode(CaptureJob);
             this.Close();
         }
 

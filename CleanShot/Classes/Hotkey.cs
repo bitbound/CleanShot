@@ -50,7 +50,7 @@ namespace CleanShot.Classes
                 int vkCode = Marshal.ReadInt32(lParam);
                 if (vkCode == PrintScreen)
                 {
-                    if (Screenshot.Current?.IsVisible != true)
+                    if (Windows.Capture.Current?.IsVisible != true)
                     {
                         Settings.Current.CaptureMode = Settings.CaptureModes.Image;
 #pragma warning disable
@@ -61,7 +61,7 @@ namespace CleanShot.Classes
                 }
                 else if (vkCode == ScrollLock)
                 {
-                    if (Screenshot.Current?.IsVisible != true)
+                    if (Windows.Capture.Current?.IsVisible != true)
                     {
                         Settings.Current.CaptureMode = Settings.CaptureModes.Video;
 #pragma warning disable

@@ -20,6 +20,7 @@ namespace CleanShot.Models
         public bool StartWithWindows { get; set; } = true;
         public bool CreateDesktopShortcut { get; set; } = true;
         public bool CreateStartMenuItem { get; set; } = true;
+        public string MemeFontFamily { get; set; }
         public bool Uninstalled { get; set; } = false;
         public bool IsTrayNotificationEnabled { get; set; } = true;
         public CaptureModes CaptureMode

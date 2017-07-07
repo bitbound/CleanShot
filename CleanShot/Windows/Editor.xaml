@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CleanShot.Windows"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.Windows.Editor"
         mc:Ignorable="d"
-        Title="CleanShot Editor" Height="500" Width="700" Background="Black" Icon="/CleanShot;component/Assets/Camera.ico">
+        Title="CleanShot Editor" Height="500" Width="700" Background="Black" Icon="/CleanShot;component/Assets/Camera.ico" WindowStartupLocation="CenterScreen">
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>

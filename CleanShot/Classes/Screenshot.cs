@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace CleanShot.Classes
 {
-    public static class Capture
+    public static class Screenshot
     {
         public static Bitmap GetCapture(Rect CaptureRegion)
         {

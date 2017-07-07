@@ -28,16 +28,15 @@ namespace CleanShot.Windows
     /// <summary>
     /// Interaction logic for ScreenshotWindow.xaml
     /// </summary>
-    public partial class Screenshot : Window
+    public partial class Capture : Window
     {
-        public static Screenshot Current { get; set; }
+        public static Capture Current { get; set; }
         System.Windows.Controls.ToolTip ConfirmTooltip { get; set; } = new System.Windows.Controls.ToolTip();
         System.Windows.Point StartPoint { get; set; }
         double DpiScale { get; set; } = 1;
         bool ManualRegionSelection { get; set; } = false;
-        ScreenCaptureJob CaptureJob { get; set; }
         public Bitmap BackgroundImage { get; set; }
-        public Screenshot()
+        public Capture()
         {
             InitializeComponent();
             Current = this;
@@ -74,7 +73,7 @@ namespace CleanShot.Windows
             if (CaptureControls.Current?.IsVisible != true)
             {
                 MainWindow.Current.WindowState = WindowState.Normal;
-                if (Editor.Current.IsVisible)
+                if (Editor.Current?.IsVisible == true)
                 {
                     Editor.Current.Activate();
                 }
@@ -122,37 +121,31 @@ namespace CleanShot.Windows
                         try
                         {
                             await HideSelf();
-                            Capture.SaveCapture(Capture.GetCapture(GetDrawnRegion()));
+                            Screenshot.SaveCapture(Screenshot.GetCapture(GetDrawnRegion()));
                             this.Close();
                         }
                         catch (Exception ex)
                         {
-                            var thisEx = ex;
-                            var errorMessage = "There was an error capturing the screenshot.  If the issue persists, please contact me with the below error." + Environment.NewLine + Environment.NewLine + "Error: " + ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace;
-                            while (thisEx.InnerException != null)
-                            {
-                                errorMessage += Environment.NewLine + Environment.NewLine + ex.InnerException?.Message + Environment.NewLine + Environment.NewLine + ex.InnerException?.StackTrace;
-                                thisEx = thisEx.InnerException;
-                            }
-                            System.Windows.MessageBox.Show(errorMessage, "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show("There was an error capturing the screenshot.  If the issue persists, please contact translucency@outlook.com.", "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MainWindow.Current.WriteToLog(ex);
                             this.Close();
                         }
                     }
                     else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
                     {
-                        await HideSelf();
-                        CaptureJob = new ScreenCaptureJob();
-                        var captureRect = GetDrawnRegion();
-                        CaptureJob.CaptureRectangle = new System.Drawing.Rectangle(Math.Max(SystemInformation.VirtualScreen.Left, (int)captureRect.X), Math.Max(SystemInformation.VirtualScreen.Top, (int)captureRect.Y), Math.Min(SystemInformation.VirtualScreen.Width, (int)captureRect.Width - ((int)captureRect.Width % 4)), Math.Min(SystemInformation.VirtualScreen.Height, (int)captureRect.Height) - ((int)captureRect.Height % 4));
-                        CaptureJob.OutputPath = System.IO.Path.Combine(Settings.Current.VideoSaveFolder);
-                        CaptureJob.ShowCountdown = true;
-                        CaptureJob.CaptureMouseCursor = true;
-                        CaptureJob.Start();
-                        var controls = CaptureControls.Create(this.CaptureJob);
-                        controls.Top = Math.Min(captureRect.Bottom + 5, Screen.FromPoint(System.Windows.Forms.Cursor.Position).WorkingArea.Bottom - controls.Height);
-                        controls.Left = captureRect.Left + (captureRect.Width / 2) - (controls.Width / 2);
-                        controls.Show();
-                        this.Close();
+                        try
+                        {
+                            await HideSelf();
+                            Video.Record(GetDrawnRegion());
+                            this.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Windows.MessageBox.Show("There was an error recording the video.  If the issue persists, please contact translucency@outlook.com.", "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MainWindow.Current.WriteToLog(ex);
+                            this.Close();
+                        }
+                       
                     }
                 }
             }

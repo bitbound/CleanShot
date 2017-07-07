@@ -35,6 +35,7 @@ namespace CleanShot
             {
                 arg.Handled = true;
                 WriteToLog(arg.Exception);
+                System.Windows.MessageBox.Show("An unhandled error has occurred.  If the issue persists, please contact translucency@outlook.com.", "Unhandled Error", MessageBoxButton.OK, MessageBoxImage.Error);
             };
             App.Current.Exit += (send, arg) =>
             {
@@ -59,7 +60,9 @@ namespace CleanShot
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
-            CheckArgs();
+            WPF_Auto_Update.Updater.ServiceURI = "https://translucency.azurewebsites.net/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
+            WPF_Auto_Update.Updater.RemoteFileURI = "https://translucency.azurewebsites.net/Downloads/CleanShot.exe";
+            WPF_Auto_Update.Updater.CheckCommandLineArgs();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -71,7 +74,7 @@ namespace CleanShot
             Settings.Load();
             CheckInstallItems();
             TrayIcon.Create();
-            await CheckForUpdates(true);
+            await WPF_Auto_Update.Updater.CheckForUpdates(true);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -236,13 +239,13 @@ namespace CleanShot
                     return;
                 }
             }
-            var win = new Screenshot();
+            var win = new Windows.Capture();
             this.WindowState = WindowState.Minimized;
             await Task.Delay(500);
             if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
             {
                 var screen = SystemInformation.VirtualScreen;
-                win.BackgroundImage = Capture.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height));
+                win.BackgroundImage = Classes.Screenshot.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height));
             }
             win.ShowDialog();
         }
@@ -286,13 +289,13 @@ namespace CleanShot
                
             }
         }
-        private void WriteToLog(Exception ExMessage)
+        public void WriteToLog(Exception ExMessage)
         {
             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\");
             var ex = ExMessage;
             while (ex != null)
             {
-                File.AppendAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Log.txt", DateTime.Now.ToString() + "\t" + ex.Message + "\t" + ex.Source + "\t" + ex.StackTrace + Environment.NewLine);
+                File.AppendAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Log.txt", DateTime.Now.ToString() + "\t" + ex.Message + "\t" + ex.StackTrace + Environment.NewLine);
                 ex = ex.InnerException;
             }
         }
