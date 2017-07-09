@@ -169,7 +169,17 @@ namespace CleanShot.Windows
             client.UploadProgressChanged += (send, arg) => {
                 progress.Value = arg.ProgressPercentage;
             };
-            var response = await client.UploadFileTaskAsync(new Uri("https://translucency.azurewebsites.net/Services/Downloader"), savePath);
+            byte[] response = new byte[0];
+            try
+            {
+                response = await client.UploadFileTaskAsync(new Uri("https://translucency.azurewebsites.net/Services/Downloader"), savePath);
+            }
+            catch (System.Net.WebException)
+            {
+                popup.IsOpen = false;
+                MessageBox.Show("There was a problem uploading the image.  Your internet connection may not be working, or the web service may be temporarily unavailable.", "Upload Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             var strResponse = Encoding.UTF8.GetString(response);
             popup.IsOpen = false;
             Clipboard.SetText(strResponse);

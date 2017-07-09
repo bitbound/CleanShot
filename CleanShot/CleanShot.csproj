@@ -83,8 +83,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPF-Auto-Update, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WPF_Auto_Update.1.2.0\lib\net452\WPF-Auto-Update.dll</HintPath>
+    <Reference Include="WPF-Auto-Update, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPF_Auto_Update.1.2.1\lib\net452\WPF-Auto-Update.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
