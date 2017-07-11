@@ -40,28 +40,19 @@ namespace CleanShot
             App.Current.Exit += (send, arg) =>
             {
                 Settings.Save();
-                if (!TrayIcon.Icon.IsDisposed)
+                if (TrayIcon.Icon?.IsDisposed == false)
                 {
                     TrayIcon.Icon.Dispose();
                 }
             };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            foreach (var proc in Process.GetProcessesByName("CleanShot"))
-            {
-                if (proc.Id != Process.GetCurrentProcess().Id)
-                {
-                    proc.Kill();
-                }
-            }
-            while (Process.GetProcessesByName("CleanShot").Any(proc=>proc.Id != Process.GetCurrentProcess().Id))
-            {
-                System.Threading.Thread.Sleep(1);
-            }
+            Process.GetProcessesByName("CleanShot").Where(proc=>proc != Process.GetCurrentProcess()).ToList().ForEach(p => p.Close());
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
             WPF_Auto_Update.Updater.ServiceURI = "https://translucency.azurewebsites.net/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
             WPF_Auto_Update.Updater.RemoteFileURI = "https://translucency.azurewebsites.net/Downloads/CleanShot.exe";
+            WPF_Auto_Update.Updater.CheckCommandLineArgs();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -73,18 +64,17 @@ namespace CleanShot
             Settings.Load();
             CheckInstallItems();
             TrayIcon.Create();
-            WPF_Auto_Update.Updater.CheckCommandLineArgs();
             await WPF_Auto_Update.Updater.CheckForUpdates(true);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-            if (Settings.Current.IsTrayNotificationEnabled)
+            if (Settings.Current?.IsTrayNotificationEnabled == true)
             {
-                TrayIcon.Icon.ShowCustomBalloon(new TrayBalloon(), PopupAnimation.Fade, 5000);
+                TrayIcon.Icon?.ShowCustomBalloon(new TrayBalloon(), PopupAnimation.Fade, 5000);
             }
-            this.Hide();
+            this?.Hide();
         }
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -179,46 +169,6 @@ namespace CleanShot
                 {
                     System.Windows.MessageBox.Show("CleanShot is up-to-date.", "No Updates", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-            }
-        }
-
-        private void CheckArgs()
-        {
-            var args = Environment.GetCommandLineArgs();
-            if (args.Length > 1 && File.Exists(args[1]))
-            {
-                var success = false;
-                var startTime = DateTime.Now;
-                while (success == false)
-                {
-                    System.Threading.Thread.Sleep(200);
-                    if (DateTime.Now - startTime > TimeSpan.FromSeconds(5))
-                    {
-                        break;
-                    }
-                    try
-                    {
-                        File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, args[1], true);
-                        success = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        WriteToLog(ex);
-                        continue;
-                    }
-                }
-                if (success == false)
-                {
-                    System.Windows.MessageBox.Show("Update failed.  Please close all CleanShot windows, then try again.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Process.GetProcessesByName("CleanShot").ToList().ForEach(p => p.Kill());
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("Update successful!  CleanShot will now restart.", "Update Complete", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Process.Start(args[1]);
-                }
-                App.Current.Shutdown();
-                return;
             }
         }
 
