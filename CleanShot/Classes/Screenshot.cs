@@ -18,7 +18,7 @@ namespace CleanShot.Classes
 {
     public static class Screenshot
     {
-        public static Bitmap GetCapture(Rect CaptureRegion)
+        public static Bitmap GetCapture(Rect CaptureRegion, bool ShowCursor)
         {
             var bitmap = new Bitmap((int)CaptureRegion.Width, (int)CaptureRegion.Height);
             var graphic = Graphics.FromImage(bitmap);
@@ -39,15 +39,18 @@ namespace CleanShot.Classes
                 }
                 graphic.ReleaseHdc(graphDC);
                 User32.ReleaseDC(hWnd, hDC);
-                // Get cursor information to draw on the screenshot.
-                var ci = new User32.CursorInfo();
-                ci.cbSize = Marshal.SizeOf(ci);
-                User32.GetCursorInfo(out ci);
-                if (ci.flags == User32.CURSOR_SHOWING)
+                if (ShowCursor)
                 {
-                    using (var icon = System.Drawing.Icon.FromHandle(ci.hCursor))
+                    // Get cursor information to draw on the screenshot.
+                    var ci = new User32.CursorInfo();
+                    ci.cbSize = Marshal.SizeOf(ci);
+                    User32.GetCursorInfo(out ci);
+                    if (ci.flags == User32.CURSOR_SHOWING)
                     {
-                        graphic.DrawIcon(icon, ci.ptScreenPos.x - screen.Left, ci.ptScreenPos.y - screen.Top);
+                        using (var icon = System.Drawing.Icon.FromHandle(ci.hCursor))
+                        {
+                            graphic.DrawIcon(icon, ci.ptScreenPos.x - screen.Left, ci.ptScreenPos.y - screen.Top);
+                        }
                     }
                 }
                 return bitmap;

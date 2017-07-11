@@ -121,7 +121,7 @@ namespace CleanShot.Windows
                         try
                         {
                             await HideSelf();
-                            Screenshot.SaveCapture(Screenshot.GetCapture(GetDrawnRegion()));
+                            Screenshot.SaveCapture(Screenshot.GetCapture(GetDrawnRegion(), false));
                             this.Close();
                         }
                         catch (Exception ex)

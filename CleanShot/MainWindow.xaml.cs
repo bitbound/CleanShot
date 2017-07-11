@@ -245,7 +245,7 @@ namespace CleanShot
             if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
             {
                 var screen = SystemInformation.VirtualScreen;
-                win.BackgroundImage = Classes.Screenshot.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height));
+                win.BackgroundImage = Classes.Screenshot.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height), Settings.Current.CaptureCursor);
             }
             win.ShowDialog();
         }

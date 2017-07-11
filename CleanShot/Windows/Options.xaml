@@ -20,6 +20,7 @@
             <CheckBox Content="Copy captures to clipboard" IsChecked="{Binding CopyToClipboard, Mode=TwoWay}" Margin="0,0,0,10"/>
             <CheckBox Content="Save captures to disk" IsChecked="{Binding SaveToDisk, Mode=TwoWay}" Margin="0,0,0,10"/>
             <CheckBox Content="Open captures in editor" IsChecked="{Binding OpenInEditor, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <CheckBox Content="Capture cursor in image" IsChecked="{Binding CaptureCursor, Mode=TwoWay}" Margin="0,0,0,10"/>
             <CheckBox Content="Show sent-to-tray notification" IsChecked="{Binding IsTrayNotificationEnabled, Mode=TwoWay}" Margin="0,0,0,10"/>
             <TextBlock Text="Image Save Folder:" Margin="0,0,0,5"/>
             <TextBox x:Name="textImageSaveFolder" Text="{Binding ImageSaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textImageSaveFolder_LostFocus"/>
