@@ -46,12 +46,20 @@ namespace CleanShot
                 }
             };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            Process.GetProcessesByName("CleanShot").Where(proc=>proc.Id != Process.GetCurrentProcess().Id).ToList().ForEach(p => p.Kill());
+            foreach (var proc in Process.GetProcessesByName("CleanShot").Where(proc=>proc.Id != Process.GetCurrentProcess().Id))
+            {
+                try
+                {
+                    proc.Kill();
+                }
+                catch { }
+            }
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
             WPF_Auto_Update.Updater.ServiceURI = "https://translucency.azurewebsites.net/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
             WPF_Auto_Update.Updater.RemoteFileURI = "https://translucency.azurewebsites.net/Downloads/CleanShot.exe";
+            Settings.Load();
             WPF_Auto_Update.Updater.CheckCommandLineArgs();
         }
 
@@ -61,7 +69,6 @@ namespace CleanShot
             {
                 this.Hide();
             }
-            Settings.Load();
             CheckInstallItems();
             TrayIcon.Create();
             await WPF_Auto_Update.Updater.CheckForUpdates(true);
