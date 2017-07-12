@@ -46,7 +46,7 @@ namespace CleanShot
                 }
             };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            Process.GetProcessesByName("CleanShot").Where(proc=>proc != Process.GetCurrentProcess()).ToList().ForEach(p => p.Close());
+            Process.GetProcessesByName("CleanShot").Where(proc=>proc.Id != Process.GetCurrentProcess().Id).ToList().ForEach(p => p.Kill());
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
