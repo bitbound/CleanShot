@@ -21,6 +21,7 @@ namespace CleanShot.Models
         public bool CreateDesktopShortcut { get; set; } = true;
         public bool CreateStartMenuItem { get; set; } = true;
         public string MemeFontFamily { get; set; }
+        public int MemeMaxFontSize { get; set; } = 36;
         public bool CaptureCursor { get; set; } = true;
         public bool Uninstalled { get; set; } = false;
         public bool IsTrayNotificationEnabled { get; set; } = true;

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CleanShot.Windows"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.Windows.Meme"
         mc:Ignorable="d"
-        Title="Meme Maker" Height="350" Width="300" Background="Black" Icon="/CleanShot;component/Assets/Camera.ico" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+        Title="Meme Maker" Height="425" Width="300" Background="Black" Icon="/CleanShot;component/Assets/Camera.ico" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
@@ -14,6 +14,9 @@
         <StackPanel Margin="10,10,10,50">
             <TextBlock Text="Font:" Foreground="White" Margin="0,0,0,5"/>
             <ComboBox x:Name="comboFont" Margin="0,0,0,25" SelectedItem="{Binding MemeFontFamily, Mode=TwoWay}"/>
+            <TextBlock Text="Max Font Size:" Foreground="White"/>
+            <TextBlock HorizontalAlignment="Center" Text="{Binding MemeMaxFontSize}" Foreground="White" Margin="0,0,0,5"></TextBlock>
+            <Slider Maximum="99" Minimum="1" SmallChange="1" Value="{Binding MemeMaxFontSize, Mode=TwoWay}" Cursor="Hand" Margin="0,0,0,25" AutoToolTipPlacement="TopLeft" />
             <TextBlock Text="Top Text:" Foreground="White" Margin="0,0,0,5"/>
             <TextBox x:Name="textTop" TextWrapping="Wrap" AcceptsReturn="True" Height="50" Margin="0,0,0,25"/>
             <TextBlock Text="Bottom Text:" Foreground="White"  Margin="0,0,0,5"/>

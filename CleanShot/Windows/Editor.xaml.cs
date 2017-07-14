@@ -80,7 +80,7 @@ namespace CleanShot.Windows
             GraphicsPath path = new GraphicsPath();
             if (!String.IsNullOrWhiteSpace(TopText))
             {
-                while (lastMeasurement.Width < ImageSourceFrame.Width - 25)
+                while (lastMeasurement.Width < ImageSourceFrame.Width - 25 && pointSize < Settings.Current.MemeMaxFontSize)
                 {
                     pointSize++;
                     font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
@@ -101,7 +101,7 @@ namespace CleanShot.Windows
            
             if (!String.IsNullOrWhiteSpace(BottomText))
             {
-                while (lastMeasurement.Width < ImageSourceFrame.Width - 25)
+                while (lastMeasurement.Width < ImageSourceFrame.Width - 25 && pointSize < Settings.Current.MemeMaxFontSize)
                 {
                     pointSize++;
                     font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
