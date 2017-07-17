@@ -30,6 +30,7 @@ namespace CleanShot.Windows
         public Bitmap OriginalImage { get; set; }
         public Bitmap EditedImage { get; set; }
         public BitmapFrame ImageSourceFrame { get; set; }
+        public System.Drawing.Size SourceSize { get; set; }
         public Graphics Graphic { get; set; }
         public string TopText { get; set; }
         public string BottomText { get; set; }
@@ -43,6 +44,7 @@ namespace CleanShot.Windows
         public static void Create(Bitmap Image)
         {
             var editor = new Editor();
+            editor.SourceSize = Image.Size;
             using (var ms = new MemoryStream())
             {
                 Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -80,7 +82,7 @@ namespace CleanShot.Windows
             GraphicsPath path = new GraphicsPath();
             if (!String.IsNullOrWhiteSpace(TopText))
             {
-                while (lastMeasurement.Width < ImageSourceFrame.Width - 25 && pointSize < Settings.Current.MemeMaxFontSize)
+                while (lastMeasurement.Width < SourceSize.Width - 25 && pointSize < Settings.Current.MemeMaxFontSize)
                 {
                     pointSize++;
                     font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
@@ -89,7 +91,7 @@ namespace CleanShot.Windows
                 pointSize--;
                 font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
                 lastMeasurement = Graphic.MeasureString(TopText, font);
-                drawPoint = new System.Drawing.Point((int)(ImageSourceFrame.Width / 2), 0);
+                drawPoint = new System.Drawing.Point((int)(SourceSize.Width / 2), 0);
                 path = new GraphicsPath();
                 path.AddString(TopText, fontFamily, (int)System.Drawing.FontStyle.Bold, Graphic.DpiY * pointSize / 72, drawPoint, new StringFormat() { Alignment = StringAlignment.Center });
                 Graphic.DrawPath(new System.Drawing.Pen(System.Drawing.Brushes.Black, pointSize / 4), path);
@@ -101,7 +103,7 @@ namespace CleanShot.Windows
            
             if (!String.IsNullOrWhiteSpace(BottomText))
             {
-                while (lastMeasurement.Width < ImageSourceFrame.Width - 25 && pointSize < Settings.Current.MemeMaxFontSize)
+                while (lastMeasurement.Width < SourceSize.Width - 25 && pointSize < Settings.Current.MemeMaxFontSize)
                 {
                     pointSize++;
                     font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
@@ -110,7 +112,7 @@ namespace CleanShot.Windows
                 pointSize--;
                 font = new Font(fontFamily, pointSize, System.Drawing.FontStyle.Bold);
                 lastMeasurement = Graphic.MeasureString(BottomText, font);
-                drawPoint = new System.Drawing.Point((int)(ImageSourceFrame.Width / 2), (int)ImageSourceFrame.Height - (int)lastMeasurement.Height);
+                drawPoint = new System.Drawing.Point((int)(SourceSize.Width / 2), (int)SourceSize.Height - (int)lastMeasurement.Height);
                 path = new GraphicsPath();
                 path.AddString(BottomText, fontFamily, (int)System.Drawing.FontStyle.Bold, Graphic.DpiY * pointSize / 72, drawPoint, new StringFormat() { Alignment = StringAlignment.Center });
                 Graphic.DrawPath(new System.Drawing.Pen(System.Drawing.Brushes.Black, pointSize / 4), path);
