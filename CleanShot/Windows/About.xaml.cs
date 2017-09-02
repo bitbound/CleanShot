@@ -32,7 +32,7 @@ namespace CleanShot.Windows
         }
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://translucency.azurewebsites.net");
+            System.Diagnostics.Process.Start("https://invis.us");
         }
     }
 }

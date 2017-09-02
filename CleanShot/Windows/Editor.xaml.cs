@@ -174,7 +174,7 @@ namespace CleanShot.Windows
             byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri("https://translucency.azurewebsites.net/Services/Downloader"), savePath);
+                response = await client.UploadFileTaskAsync(new Uri("https://invis.us/Services/Downloader"), savePath);
             }
             catch (System.Net.WebException)
             {
