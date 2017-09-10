@@ -30,9 +30,14 @@ namespace CleanShot.Windows
                 return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
         }
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        private void hyperTranslucency_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://invis.us");
+        }
+
+        private void hyperIcons8_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://icons8.com");
         }
     }
 }
