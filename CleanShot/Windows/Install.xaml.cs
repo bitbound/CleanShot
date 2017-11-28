@@ -36,7 +36,7 @@ namespace CleanShot.Windows
                 {
                     progressBar.Value = arg.ProgressPercentage;
                 };
-                await client.DownloadFileTaskAsync(new Uri("https://invis.us/Downloads/Encoder_en.exe"), filePath);
+                await client.DownloadFileTaskAsync(new Uri("http://invis.me/Downloads/Encoder_en.exe"), filePath);
             }
             progressBar.Value = 0;
             textProcess.Text = "Installing";
