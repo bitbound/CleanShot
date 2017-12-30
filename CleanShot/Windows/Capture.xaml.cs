@@ -20,7 +20,6 @@ using CleanShot.Win32;
 using System.Runtime.InteropServices;
 using CleanShot.Controls;
 using CleanShot.Classes;
-using Microsoft.Expression.Encoder.ScreenCapture;
 using System.Windows.Controls.Primitives;
 
 namespace CleanShot.Windows
@@ -31,19 +30,34 @@ namespace CleanShot.Windows
     public partial class Capture : Window
     {
         public static Capture Current { get; set; }
-        System.Windows.Controls.ToolTip ConfirmTooltip { get; set; } = new System.Windows.Controls.ToolTip();
-        System.Windows.Point StartPoint { get; set; }
-        double DpiScale { get; set; } = 1;
-        bool ManualRegionSelection { get; set; } = false;
         public Bitmap BackgroundImage { get; set; }
-        public Capture()
+        private System.Windows.Controls.ToolTip confirmTooltip { get; set; } = new System.Windows.Controls.ToolTip();
+        private System.Windows.Point startPoint { get; set; }
+        private double dpiScale { get; set; } = 1;
+        private bool manualRegionSelection { get; set; } = false;
+        private Models.CaptureMode captureMode { get; set; }
+
+        private Capture()
         {
             InitializeComponent();
             Current = this;
         }
+        public static async Task Start(Models.CaptureMode captureMode)
+        {
+            var capture = new Capture();
+            capture.captureMode = captureMode;
+            MainWindow.Current.WindowState = WindowState.Minimized;
+            if (captureMode == Models.CaptureMode.PNG)
+            {
+                await Task.Delay(500);
+                var screen = SystemInformation.VirtualScreen;
+                capture.BackgroundImage = Classes.Screenshot.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height), Settings.Current.CaptureCursor);
+            }
+            capture.ShowDialog();
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            DpiScale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
+            dpiScale = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice.M11;
             var screen = SystemInformation.VirtualScreen;
             labelHeader.Visibility = Visibility.Visible;
             borderCapture.Visibility = Visibility.Visible;
@@ -51,7 +65,7 @@ namespace CleanShot.Windows
             this.Height = screen.Height;
             this.Left = screen.Left;
             this.Top = screen.Top;
-            if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
+            if (captureMode == Models.CaptureMode.PNG)
             {
                 using (var ms = new MemoryStream())
                 {
@@ -83,10 +97,10 @@ namespace CleanShot.Windows
         {
             if (e.Key == Key.Escape)
             {
-                if (ConfirmTooltip.IsOpen == true)
+                if (confirmTooltip.IsOpen == true)
                 {
-                    ConfirmTooltip.IsOpen = false;
-                    ManualRegionSelection = false;
+                    confirmTooltip.IsOpen = false;
+                    manualRegionSelection = false;
                     FrameWindowUnderCursor();
                 }
                 else
@@ -101,11 +115,11 @@ namespace CleanShot.Windows
             
             if (e.ChangedButton == MouseButton.Left)
             {
-                if (ConfirmTooltip.IsOpen)
+                if (confirmTooltip.IsOpen)
                 {
-                    ConfirmTooltip.IsOpen = false;
+                    confirmTooltip.IsOpen = false;
                 }
-                StartPoint = e.GetPosition(this);
+                startPoint = e.GetPosition(this);
             }
             
         }
@@ -114,9 +128,9 @@ namespace CleanShot.Windows
         {
             if (e.ChangedButton == MouseButton.Right)
             {
-                if (ConfirmTooltip.IsOpen == true)
+                if (confirmTooltip.IsOpen == true)
                 {
-                    if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
+                    if (captureMode == Models.CaptureMode.PNG)
                     {
                         try
                         {
@@ -131,16 +145,19 @@ namespace CleanShot.Windows
                             this.Close();
                         }
                     }
-                    else if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
+                    else if (captureMode == Models.CaptureMode.GIF)
                     {
+                        CaptureControls controls = null;
                         try
                         {
                             await HideSelf();
-                            Video.Record(GetDrawnRegion());
+                            var region = GetDrawnRegion();
+                            await CaptureControls.Create(region);
                             this.Close();
                         }
                         catch (Exception ex)
                         {
+                            controls?.Close();
                             System.Windows.MessageBox.Show("There was an error recording the video.  If the issue persists, please contact translucency@outlook.com.", "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             MainWindow.Current.WriteToLog(ex);
                             this.Close();
@@ -151,15 +168,15 @@ namespace CleanShot.Windows
             }
             else if (e.ChangedButton == MouseButton.Left)
             {
-                ManualRegionSelection = true;
-                ConfirmTooltip.Content = "Right-click to confirm capture region.  Press Esc to cancel.";
-                ConfirmTooltip.FontSize = 15;
-                ConfirmTooltip.FontWeight = FontWeights.Bold;
-                ConfirmTooltip.Foreground = new SolidColorBrush(Colors.Blue);
+                manualRegionSelection = true;
+                confirmTooltip.Content = "Right-click to confirm capture region.  Press Esc to cancel.";
+                confirmTooltip.FontSize = 15;
+                confirmTooltip.FontWeight = FontWeights.Bold;
+                confirmTooltip.Foreground = new SolidColorBrush(Colors.Blue);
                 var scaledRect = GetDrawnRegion();
-                ConfirmTooltip.PlacementRectangle = new Rect(scaledRect.X, scaledRect.Y, scaledRect.Width, scaledRect.Height);
-                ConfirmTooltip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
-                ConfirmTooltip.IsOpen = true;
+                confirmTooltip.PlacementRectangle = new Rect(scaledRect.X, scaledRect.Y, scaledRect.Width, scaledRect.Height);
+                confirmTooltip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
+                confirmTooltip.IsOpen = true;
             }
         }
 
@@ -167,12 +184,12 @@ namespace CleanShot.Windows
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                ManualRegionSelection = true;
+                manualRegionSelection = true;
                 var pos = e.GetPosition(this);
-                var left = Math.Min(pos.X, StartPoint.X);
-                var top = Math.Min(pos.Y, StartPoint.Y);
-                var width = Math.Abs(StartPoint.X - pos.X);
-                var height = Math.Abs(StartPoint.Y - pos.Y);
+                var left = Math.Min(pos.X, startPoint.X);
+                var top = Math.Min(pos.Y, startPoint.Y);
+                var width = Math.Abs(startPoint.X - pos.X);
+                var height = Math.Abs(startPoint.Y - pos.Y);
                 borderCapture.Margin = new Thickness(left, top, 0, 0);
                 borderCapture.Width = width;
                 borderCapture.Height = height;
@@ -180,14 +197,15 @@ namespace CleanShot.Windows
         }
         private Rect GetDrawnRegion()
         {
-            return new Rect(Math.Round(borderCapture.Margin.Left * DpiScale + SystemInformation.VirtualScreen.Left, 0), Math.Round(borderCapture.Margin.Top * DpiScale + SystemInformation.VirtualScreen.Top, 0), Math.Round(borderCapture.Width * DpiScale, 0), Math.Round(borderCapture.Height * DpiScale, 0));
+            return new Rect(Math.Round(borderCapture.Margin.Left * dpiScale + SystemInformation.VirtualScreen.Left, 0), Math.Round(borderCapture.Margin.Top * dpiScale + SystemInformation.VirtualScreen.Top, 0), Math.Round(borderCapture.Width * dpiScale, 0), Math.Round(borderCapture.Height * dpiScale, 0));
         }
         private async Task HideSelf()
         {
-            ConfirmTooltip.IsOpen = false;
+            confirmTooltip.IsOpen = false;
             labelHeader.Visibility = Visibility.Collapsed;
             borderCapture.Visibility = Visibility.Collapsed;
-            while (labelHeader.IsVisible || ConfirmTooltip.IsVisible || borderCapture.IsVisible)
+            this.Visibility = Visibility.Collapsed;
+            while (labelHeader.IsVisible || confirmTooltip.IsVisible || borderCapture.IsVisible)
             {
                 await Task.Delay(100);
             }
@@ -201,7 +219,7 @@ namespace CleanShot.Windows
             var thisHandle = new System.Windows.Interop.WindowInteropHelper(this).Handle;
             var shellHandle = User32.GetShellWindow();
             var desktopHandle = User32.GetDesktopWindow();
-            while (this.IsVisible && ManualRegionSelection == false)
+            while (this.IsVisible && manualRegionSelection == false)
             {
                 User32.GetCursorPos(out point);
                 winList.Clear();

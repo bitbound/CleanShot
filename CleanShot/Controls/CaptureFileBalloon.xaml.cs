@@ -29,7 +29,7 @@ namespace CleanShot.Controls
 
         private void UserControl_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", Settings.Current.ImageSaveFolder);
+            System.Diagnostics.Process.Start("explorer.exe", Settings.Current.SaveFolder);
             (this.Parent as Popup).IsOpen = false;
         }
     }

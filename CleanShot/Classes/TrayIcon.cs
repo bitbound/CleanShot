@@ -1,4 +1,5 @@
 ﻿using CleanShot.Models;
+using CleanShot.Windows;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
@@ -53,17 +54,15 @@ namespace CleanShot.Classes
             };
             Icon.ContextMenu.Items.Add(item);
             item = new MenuItem() { Header = "Capture Image" };
-            item.Click += (send, arg) =>
+            item.Click += async (send, arg) =>
             {
-                Settings.Current.CaptureMode = Settings.CaptureModes.Image;
-                MainWindow.Current.InitiateCapture();
+                await Capture.Start(Models.CaptureMode.PNG);
             };
             Icon.ContextMenu.Items.Add(item);
             item = new MenuItem() { Header = "Capture Video" };
-            item.Click += (send, arg) =>
+            item.Click += async (send, arg) =>
             {
-                Settings.Current.CaptureMode = Settings.CaptureModes.Video;
-                MainWindow.Current.InitiateCapture();
+                await Capture.Start(Models.CaptureMode.GIF);
             };
             Icon.ContextMenu.Items.Add(item);
             item = new MenuItem() { Header = "Exit" };

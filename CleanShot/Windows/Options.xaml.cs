@@ -69,30 +69,6 @@ namespace CleanShot.Windows
                 MessageBox.Show("Unable to create the specified directory.", "Invalid Directory", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        private void textVideoSaveFolder_LostFocus(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Directory.CreateDirectory(textVideoSaveFolder.Text);
-            }
-            catch
-            {
-                textVideoSaveFolder.Text = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"\CleanShot\Images\");
-                MessageBox.Show("Unable to create the specified directory.", "Invalid Directory", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void buttonBrowseVideo_Click(object sender, RoutedEventArgs e)
-        {
-
-            var browser = new System.Windows.Forms.FolderBrowserDialog();
-            browser.ShowDialog();
-            if (Directory.Exists(browser.SelectedPath))
-            {
-                textVideoSaveFolder.Text = browser.SelectedPath;
-                Settings.Current.ImageSaveFolder = browser.SelectedPath;
-            }
-        }
 
         private void buttonBrowseImage_Click(object sender, RoutedEventArgs e)
         {
@@ -102,7 +78,7 @@ namespace CleanShot.Windows
             if (Directory.Exists(browser.SelectedPath))
             {
                 textImageSaveFolder.Text = browser.SelectedPath;
-                Settings.Current.ImageSaveFolder = browser.SelectedPath;
+                Settings.Current.SaveFolder = browser.SelectedPath;
             }
         }
 

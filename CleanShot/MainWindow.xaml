@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:CleanShot"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.MainWindow"
         mc:Ignorable="d"
-        Title="CleanShot" Height="200" Width="225" ResizeMode="NoResize" Icon="Assets/Camera.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing" Background="Black">
+        Title="CleanShot" Height="100" Width="200" ResizeMode="NoResize" Icon="Assets/Camera.ico" Loaded="Window_Loaded" Topmost="{Binding AlwaysOnTop}" Closing="Window_Closing" Background="Black">
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
     <Grid Margin="10">
-        <Button x:Name="buttonMenu" HorizontalAlignment="Right" VerticalAlignment="Top" Height="25" Width="25" Cursor="Hand" Click="buttonMenu_Click" Margin="0,10,10,0" Style="{DynamicResource Transparent_Buttons}">
+        <Button x:Name="buttonMenu" HorizontalAlignment="Right" VerticalAlignment="Top" Height="25" Width="25" Cursor="Hand" Click="buttonMenu_Click" Style="{DynamicResource Transparent_Buttons}">
             <Button.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="menuOpenImage"  Header="Open Image" Click="menuOpenImage_Click"/>
@@ -30,13 +30,14 @@
             </StackPanel>
         </Button>
         <!--Tag needs to be parsed into Settings.CaptureModes. -->
-        <ToggleButton x:Name="buttonImage" Content="Image" Tag="Image" Height="40" Width="80" IsChecked="True" Margin="10,40,0,0" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Capture a still image (Shortcut Key: Print Screen)" />
-        <ToggleButton x:Name="buttonVideo" Content="Video" Tag="Video" Height="40" Width="80" Margin="10,85,0,0" Style="{DynamicResource ToggleButtons}" Click="CaptureModeToggled" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Record a video (Shortcut Key: Scroll Lock)" />
-        <Button Margin="0,58,5,0" BorderThickness="0" Cursor="Hand" Click="buttonCapture_Click" Style="{DynamicResource Transparent_Buttons}" HorizontalAlignment="Right" Width="50" Height="50" VerticalAlignment="Top" MouseEnter="buttonCapture_MouseEnter" MouseLeave="buttonCapture_MouseLeave">
+        <Button x:Name="capturePNGButton" Height="40" Width="40" Margin="10,0,0,0" Style="{DynamicResource Transparent_Buttons}" Click="CaptureImage" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Capture a PNG image (Shortcut Key: Print Screen)" Cursor="Hand">
             <Grid>
-                <Ellipse x:Name="ellipseCaptureBackground" Margin="5">
-                </Ellipse>
-                <Image Source="Assets/icons8-Record-96.png"></Image>
+                <Image Source="Assets/Screenshot.png"></Image>
+            </Grid>
+        </Button>
+        <Button x:Name="captureGIFButton" Height="40" Width="40" Margin="70,0,0,0" Style="{DynamicResource Transparent_Buttons}" Click="CaptureGIF" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Record a GIF (Shortcut Key: Scroll Lock)" Cursor="Hand">
+            <Grid>
+                <Image Source="Assets/Record.png"></Image>
             </Grid>
         </Button>
     </Grid>

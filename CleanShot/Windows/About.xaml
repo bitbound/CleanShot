@@ -17,7 +17,7 @@
             <Hyperlink Click="hyperTranslucency_Click">http://invis.me</Hyperlink>
             <TextBlock>)</TextBlock>
         </TextBlock>
-        <TextBox Height="80" Margin="0, 0, 0, 5" TextWrapping="Wrap" Text="CleanShot is a portable app for taking screenshots and video recordings.&#x0a;&#x0a;Third Party Libraries:&#x0a;&#x0a;Fody/Costura: https://github.com/Fody/Costura&#x0a;&#x0a;WPF NotifyIcon: http://www.hardcodet.net/wpf-notifyicon&#x0a;&#x0a;Microsoft Expression Encoder 4: https://www.microsoft.com/en-us/download/details.aspx?id=27870" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
+        <TextBox Height="80" Margin="0, 0, 0, 5" TextWrapping="Wrap" Text="CleanShot is a portable app for taking screenshots and recording GIFs.&#x0a;&#x0a;Third Party Libraries:&#x0a;&#x0a;Fody/Costura: https://github.com/Fody/Costura&#x0a;&#x0a;WPF NotifyIcon: http://www.hardcodet.net/wpf-notifyicon" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
         <TextBlock>
             <Run>Icons by </Run>
             <Hyperlink Click="hyperIcons8_Click">https://icons8.com/</Hyperlink>

@@ -88,14 +88,10 @@ namespace CleanShot
             Hotkey.Set();
             base.OnSourceInitialized(e);
         }
-        private void buttonCapture_Click(object sender, RoutedEventArgs e)
-        {
-            InitiateCapture();
-        }
         private void menuOpenImage_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog();
-            dialog.InitialDirectory = Settings.Current.ImageSaveFolder;
+            dialog.InitialDirectory = Settings.Current.SaveFolder;
             dialog.AddExtension = true;
             dialog.Filter = "Image Files (*.png;*.jpg)|*.png;*.jpg";
             dialog.DefaultExt = ".png";
@@ -179,33 +175,6 @@ namespace CleanShot
             }
         }
 
-        public async void InitiateCapture()
-        {
-            if (Settings.Current.CaptureMode == Settings.CaptureModes.Video)
-            {
-                var expKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Expression\Encoder\4.0", false);
-                if (expKey == null)
-                {
-                    var result = System.Windows.MessageBox.Show("The video recording feature requires Microsoft's Expression Encoder 4 SDK.  Would you like to download and install it now (~25MB)?", "Expression Encoder Required", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        var install = new Install();
-                        install.Owner = this;
-                        install.ShowDialog();
-                    }
-                    return;
-                }
-            }
-            var win = new Windows.Capture();
-            this.WindowState = WindowState.Minimized;
-            await Task.Delay(500);
-            if (Settings.Current.CaptureMode == Settings.CaptureModes.Image)
-            {
-                var screen = SystemInformation.VirtualScreen;
-                win.BackgroundImage = Classes.Screenshot.GetCapture(new Rect(screen.Left, screen.Top, screen.Width, screen.Height), Settings.Current.CaptureCursor);
-            }
-            win.ShowDialog();
-        }
         private void CheckInstallItems()
         {
             var di = Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\");
@@ -257,22 +226,16 @@ namespace CleanShot
             }
         }
 
-        private void CaptureModeToggled(object sender, RoutedEventArgs e)
+        private async void CaptureImage(object sender, RoutedEventArgs e)
         {
-            buttonImage.IsChecked = false;
-            buttonVideo.IsChecked = false;
-            (sender as ToggleButton).IsChecked = true;
-            Settings.Current.CaptureMode = (Settings.CaptureModes)Enum.Parse(typeof(Settings.CaptureModes), (sender as ToggleButton).Tag.ToString());
+            await Capture.Start(Models.CaptureMode.PNG);
         }
 
-        private void buttonCapture_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private async void CaptureGIF(object sender, RoutedEventArgs e)
         {
-            ellipseCaptureBackground.Fill = new SolidColorBrush(Colors.AliceBlue);
+            await Capture.Start(Models.CaptureMode.GIF);
         }
 
-        private void buttonCapture_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ellipseCaptureBackground.Fill = null;
-        }
+    
     }
 }

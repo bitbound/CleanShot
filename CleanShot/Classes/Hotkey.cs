@@ -3,6 +3,8 @@ using CleanShot.Windows;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 
@@ -52,9 +54,8 @@ namespace CleanShot.Classes
                 {
                     if (Windows.Capture.Current?.IsVisible != true)
                     {
-                        Settings.Current.CaptureMode = Settings.CaptureModes.Image;
 #pragma warning disable
-                        MainWindow.Current.InitiateCapture();
+                        Capture.Start(Models.CaptureMode.PNG);
 #pragma warning restore
                         return new IntPtr(1);
                     }
@@ -63,9 +64,8 @@ namespace CleanShot.Classes
                 {
                     if (Windows.Capture.Current?.IsVisible != true)
                     {
-                        Settings.Current.CaptureMode = Settings.CaptureModes.Video;
 #pragma warning disable
-                        MainWindow.Current.InitiateCapture();
+                        Capture.Start(Models.CaptureMode.GIF);
 #pragma warning restore
                         return new IntPtr(1);
                     }

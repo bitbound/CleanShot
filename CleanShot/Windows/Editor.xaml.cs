@@ -131,7 +131,7 @@ namespace CleanShot.Windows
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog();
-            dialog.InitialDirectory = Settings.Current.ImageSaveFolder;
+            dialog.InitialDirectory = Settings.Current.SaveFolder;
             dialog.AddExtension = true;
             dialog.Filter = "Image Files (*.png)|*.png";
             dialog.DefaultExt = ".png";
