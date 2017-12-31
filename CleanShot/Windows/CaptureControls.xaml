@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanShot.Windows"
         mc:Ignorable="d"
-        Title="Capture Controls" WindowStyle="None" ResizeMode="NoResize" Height="65" Width="200" Background="Black" MouseLeftButtonDown="Window_MouseLeftButtonDown" Closed="Window_Closed">
+        Title="Capture Controls" WindowStyle="None" ResizeMode="NoResize" Height="65" Width="200" Background="Black" MouseLeftButtonDown="Window_MouseLeftButtonDown" Closed="Window_Closed" Topmost="True">
     <Border BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,0">
         <Grid Margin="10,10,10,10">
             <Button x:Name="buttonPause" Height="25" Width="25" HorizontalAlignment="Left" VerticalAlignment="Top" Click="buttonPause_Click" Style="{DynamicResource Transparent_Buttons}" Margin="10,10,0,0" Cursor="Hand">
