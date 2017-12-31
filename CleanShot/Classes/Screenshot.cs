@@ -66,7 +66,6 @@ namespace CleanShot.Classes
         {
             if (Settings.Current.SaveToDisk)
             {
-                var count = 0;
                 var saveFile = Path.Combine(Settings.Current.SaveFolder, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss.ff"));
                 Directory.CreateDirectory(Settings.Current.SaveFolder);
                 CaptureBitmap.Save(saveFile + ".png", System.Drawing.Imaging.ImageFormat.Png);
