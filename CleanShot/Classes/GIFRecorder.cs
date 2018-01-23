@@ -73,7 +73,7 @@ namespace CleanShot.Classes
                 return;
             }
             var gifEncoder = new GifBitmapEncoder();
-
+            
             for (var i = 0; i < Directory.GetFiles(tempPath).Length; i++)
             {
                 if (i == 0)
@@ -106,11 +106,19 @@ namespace CleanShot.Classes
                     }
                 }
             }
+
             var di = Directory.CreateDirectory(Settings.Current.SaveFolder);
             var saveFile = Path.Combine(di.FullName, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss.ff") + ".gif");
-            using (var fs = new FileStream(saveFile, FileMode.Create))
+            using (var ms = new MemoryStream())
             {
-                gifEncoder.Save(fs);
+                gifEncoder.Save(ms);
+                var fileBytes = ms.ToArray();
+                var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
+                var newBytes = new List<byte>();
+                newBytes.AddRange(fileBytes.Take(13));
+                newBytes.AddRange(applicationExtension);
+                newBytes.AddRange(fileBytes.Skip(13));
+                File.WriteAllBytes(saveFile, newBytes.ToArray());
             }
             gifEncoder.Frames.Clear();
 
