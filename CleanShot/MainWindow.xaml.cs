@@ -76,6 +76,11 @@ namespace CleanShot
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (Settings.Current.IsCloseToSystemTrayEnabled == false)
+            {
+                App.Current.Shutdown();
+                return;
+            }
             e.Cancel = true;
             if (Settings.Current?.IsTrayNotificationEnabled == true)
             {

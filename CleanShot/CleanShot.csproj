@@ -212,13 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Folder_32xMD.png" />
-    <Resource Include="Assets\WindowScreenshot_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\HamburgerMenu_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Assets\Hamburger.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml">
@@ -243,6 +236,9 @@
   <ItemGroup>
     <Resource Include="Assets\Record.png" />
     <Resource Include="Assets\Screenshot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\icons8-folder-50.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets" Condition="Exists('..\packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" />

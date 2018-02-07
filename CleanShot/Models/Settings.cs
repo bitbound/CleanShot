@@ -24,6 +24,7 @@ namespace CleanShot.Models
         public bool CaptureCursor { get; set; } = true;
         public bool Uninstalled { get; set; } = false;
         public bool IsTrayNotificationEnabled { get; set; } = true;
+        public bool IsCloseToSystemTrayEnabled { get; set; } = true;
 
         public static void Load()
         {
