@@ -49,7 +49,7 @@ namespace CleanShot.Classes
                     {
                         using (var icon = System.Drawing.Icon.FromHandle(ci.hCursor))
                         {
-                            graphic.DrawIcon(icon, ci.ptScreenPos.x - screen.Left, ci.ptScreenPos.y - screen.Top);
+                            graphic.DrawIcon(icon, (int)(ci.ptScreenPos.x - screen.Left - CaptureRegion.Left), (int)(ci.ptScreenPos.y - screen.Top - CaptureRegion.Top));
                         }
                     }
                 }

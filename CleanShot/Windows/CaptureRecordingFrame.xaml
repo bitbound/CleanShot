@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanShot.Windows"
         mc:Ignorable="d"
-        Title="CaptureRecordingFrame" Height="300" Width="300" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Loaded="Window_Loaded" Topmost="True">
+        Title="Capture Recording Frame" Height="300" Width="300" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Loaded="Window_Loaded" Topmost="True">
     <Grid>
         <Border x:Name="topLeftFrame" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="25" BorderThickness="2,2,0,0" BorderBrush="Lime"></Border>
         <Border x:Name="topRightFrame" HorizontalAlignment="Right" VerticalAlignment="Top" Height="25" Width="25" BorderThickness="0,2,2,0" BorderBrush="Lime"></Border>

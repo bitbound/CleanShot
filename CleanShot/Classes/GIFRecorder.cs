@@ -72,55 +72,63 @@ namespace CleanShot.Classes
             {
                 return;
             }
-            var gifEncoder = new GifBitmapEncoder();
-            
-            for (var i = 0; i < Directory.GetFiles(tempPath).Length; i++)
+            try
             {
-                if (i == 0)
+                var gifEncoder = new GifBitmapEncoder();
+
+                for (var i = 0; i < Directory.GetFiles(tempPath).Length; i++)
                 {
-                    using (var fs = new FileStream(Path.Combine(tempPath, i.ToString() + ".png"), FileMode.Open, FileAccess.Read))
+                    if (i == 0)
                     {
-                        gifEncoder.Frames.Add(BitmapFrame.Create(fs, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad));
-                    }
-                }
-                else
-                {
-                    using (var bitmap1 = (Bitmap)Bitmap.FromFile(Path.Combine(tempPath, i.ToString() + ".png")))
-                    {
-                        using (var bitmap2 = (Bitmap)Bitmap.FromFile(Path.Combine(tempPath, (i - 1).ToString() + ".png")))
+                        using (var fs = new FileStream(Path.Combine(tempPath, i.ToString() + ".png"), FileMode.Open, FileAccess.Read))
                         {
-                            var diff = ImageDiff.GetDifference(bitmap1, bitmap2);
-                            using (var ms = new MemoryStream())
+                            gifEncoder.Frames.Add(BitmapFrame.Create(fs, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad));
+                        }
+                    }
+                    else
+                    {
+                        using (var bitmap1 = (Bitmap)Bitmap.FromFile(Path.Combine(tempPath, i.ToString() + ".png")))
+                        {
+                            using (var bitmap2 = (Bitmap)Bitmap.FromFile(Path.Combine(tempPath, (i - 1).ToString() + ".png")))
                             {
-                                try
+                                var diff = ImageDiff.GetDifference(bitmap1, bitmap2);
+                                using (var ms = new MemoryStream())
                                 {
-                                    diff.Save(ms, ImageFormat.Png);
+                                    try
+                                    {
+                                        diff.Save(ms, ImageFormat.Png);
+                                    }
+                                    catch
+                                    {
+                                        bitmap1.Save(ms, ImageFormat.Png);
+                                    }
+                                    gifEncoder.Frames.Add(BitmapFrame.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad));
                                 }
-                                catch
-                                {
-                                    bitmap1.Save(ms, ImageFormat.Png);
-                                }
-                                gifEncoder.Frames.Add(BitmapFrame.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad));
                             }
                         }
                     }
                 }
+
+                var di = Directory.CreateDirectory(Settings.Current.SaveFolder);
+                var saveFile = Path.Combine(di.FullName, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss.ff") + ".gif");
+                using (var ms = new MemoryStream())
+                {
+                    gifEncoder.Save(ms);
+                    var fileBytes = ms.ToArray();
+                    var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
+                    var newBytes = new List<byte>();
+                    newBytes.AddRange(fileBytes.Take(13));
+                    newBytes.AddRange(applicationExtension);
+                    newBytes.AddRange(fileBytes.Skip(13));
+                    File.WriteAllBytes(saveFile, newBytes.ToArray());
+                }
+                gifEncoder.Frames.Clear();
+            }
+            catch (OutOfMemoryException)
+            {
+                System.Windows.MessageBox.Show("The application has run out of available memory.  Try creating a shorter GIF.", "Out of Memory", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            var di = Directory.CreateDirectory(Settings.Current.SaveFolder);
-            var saveFile = Path.Combine(di.FullName, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss.ff") + ".gif");
-            using (var ms = new MemoryStream())
-            {
-                gifEncoder.Save(ms);
-                var fileBytes = ms.ToArray();
-                var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
-                var newBytes = new List<byte>();
-                newBytes.AddRange(fileBytes.Take(13));
-                newBytes.AddRange(applicationExtension);
-                newBytes.AddRange(fileBytes.Skip(13));
-                File.WriteAllBytes(saveFile, newBytes.ToArray());
-            }
-            gifEncoder.Frames.Clear();
 
             try
             {

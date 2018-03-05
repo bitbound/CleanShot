@@ -21,9 +21,11 @@ namespace CleanShot.Windows
     /// </summary>
     public partial class CaptureRecordingFrame : Window
     {
+        public static CaptureRecordingFrame Current { get; set; }
         public CaptureRecordingFrame()
         {
             InitializeComponent();
+            Current = this;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
