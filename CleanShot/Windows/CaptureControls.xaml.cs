@@ -46,6 +46,7 @@ namespace CleanShot.Windows
                 await Task.Delay(1000);
             }
             controls.captureRecordingFrame.countdownText.Visibility = Visibility.Collapsed;
+            await Task.Delay(1);
             GIFRecorder.Record(Region);
 
 

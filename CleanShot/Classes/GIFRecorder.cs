@@ -41,30 +41,33 @@ namespace CleanShot.Classes
             var di = Directory.CreateDirectory(tempPath);
             State = RecordingState.Recording;
             previousBitmap = new Bitmap((int)Region.Width, (int)Region.Height);
-            var timer = new DispatcherTimer();
-            var ticks = 0;
-            timer.Interval = TimeSpan.FromMilliseconds(100);
-            timer.Tick += (send, arg) =>
+            Task.Run(async () =>
             {
-                if (State == RecordingState.Stopped)
+                var ticks = 0;
+                var captureStart = DateTime.Now;
+
+                while (State != RecordingState.Stopped)
                 {
-                    (send as DispatcherTimer).Stop();
-                    return;
-                }
-                if (State == RecordingState.Paused)
-                {
-                    return;
-                }
-                using (var screenshot = Screenshot.GetCapture(Region, true))
-                {
-                    using (var ms = new MemoryStream())
+                    if (State == RecordingState.Paused)
                     {
-                        screenshot.Save(Path.Combine(di.FullName, ticks.ToString() + ".png"), ImageFormat.Png);                        
+                        await Task.Delay(10);
+                        continue;
                     }
-                    ticks++;
+
+                    captureStart = DateTime.Now;
+                    using (var screenshot = Screenshot.GetCapture(Region, true))
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            screenshot.Save(Path.Combine(di.FullName, ticks.ToString() + ".png"), ImageFormat.Png);
+                        }
+                        var captureTime = (DateTime.Now - captureStart).TotalMilliseconds;
+                        var delayTime = Math.Max(0, 100 - (int)captureTime);
+                        await Task.Delay(delayTime);
+                        ticks++;
+                    }
                 }
-            };
-            timer.Start();
+            });
         }
         public static void Encode()
         {
