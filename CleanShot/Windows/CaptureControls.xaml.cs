@@ -46,8 +46,11 @@ namespace CleanShot.Windows
                 await Task.Delay(1000);
             }
             controls.captureRecordingFrame.countdownText.Visibility = Visibility.Collapsed;
-            await Task.Delay(10);
-
+            do
+            {
+                await Task.Delay(100);
+            }
+            while (controls.captureRecordingFrame.countdownText.IsVisible);
 
             var timer = new System.Windows.Threading.DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(100);
@@ -68,7 +71,7 @@ namespace CleanShot.Windows
             };
             timer.Start();
 
-            GIFRecorder.Record(Region);
+            GIFRecorder.Record(Capture.Current.GetDrawnRegion(true));
         }
         private CaptureControls()
         {

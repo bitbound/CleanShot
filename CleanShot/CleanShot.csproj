@@ -124,6 +124,9 @@
     <Compile Include="Windows\Editor.xaml.cs">
       <DependentUpon>Editor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\GIFViewer.xaml.cs">
+      <DependentUpon>GIFViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Meme.xaml.cs">
       <DependentUpon>Meme.xaml</DependentUpon>
     </Compile>
@@ -176,6 +179,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Editor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\GIFViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -3,6 +3,7 @@ using CleanShot.Controls;
 using CleanShot.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -149,7 +150,7 @@ namespace CleanShot.Windows
             TrayIcon.Icon.ShowCustomBalloon(new CaptureClipboardBalloon(), PopupAnimation.Fade, 5000);
         }
 
-        private async void buttonGetLink_Click(object sender, RoutedEventArgs e)
+        private async void buttonShare_Click(object sender, RoutedEventArgs e)
         {
             var popup = new ToolTip();
             popup.BorderBrush = new SolidColorBrush(Colors.LightGray);
@@ -174,7 +175,7 @@ namespace CleanShot.Windows
             byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri("http://invis.me/Services/Downloader"), savePath);
+                response = await client.UploadFileTaskAsync(new Uri("http://invis.me/Services/ImageShare"), savePath);
             }
             catch (System.Net.WebException)
             {
@@ -184,8 +185,7 @@ namespace CleanShot.Windows
             }
             var strResponse = Encoding.UTF8.GetString(response);
             popup.IsOpen = false;
-            Clipboard.SetText(strResponse);
-            TrayIcon.Icon.ShowCustomBalloon(new LinkClipboardBalloon(), PopupAnimation.Fade, 5000);
+            Process.Start(strResponse);
         }
     }
 }

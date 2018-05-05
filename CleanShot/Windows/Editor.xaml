@@ -13,7 +13,7 @@
     <Grid Margin="10">
         <Image x:Name="imageMain" Margin="0,0,0,60"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-            <Button x:Name="buttonGetLink" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Height="40" Style="{DynamicResource Dark_Buttons}" Content="Get Link" Click="buttonGetLink_Click"/>
+            <Button x:Name="buttonShare" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Height="40" Style="{DynamicResource Dark_Buttons}" Content="Share" Click="buttonShare_Click"/>
             <Button x:Name="buttonCreateMeme" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Height="40" Margin="25,0,0,0" Style="{DynamicResource Dark_Buttons}" Click="buttonCreateMeme_Click" Content="Create Meme"/>
             <Button x:Name="buttonSave" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Height="40" Margin="25,0,0,0" Style="{DynamicResource Dark_Buttons}" Click="buttonSave_Click" Content="Save"/>
             <Button x:Name="buttonCopy" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Height="40" Margin="25,0,0,0" Style="{DynamicResource Dark_Buttons}" Click="buttonCopy_Click" Content="Copy"/>

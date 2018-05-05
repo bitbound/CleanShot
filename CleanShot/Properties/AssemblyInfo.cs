@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Translucency")]
 [assembly: AssemblyProduct("CleanShot")]
-[assembly: AssemblyCopyright("Copyright ©  2017 Translucency")]
+[assembly: AssemblyCopyright("Copyright ©  2018 Translucency")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,7 +51,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.4.0.0")]
-[assembly: AssemblyFileVersion("2.4.0.0")]
+[assembly: AssemblyVersion("2.5.0.0")]
+[assembly: AssemblyFileVersion("2.5.0.0")]
 [assembly: Guid("f804cdc6-4d6d-454a-b580-7d90fd3dee17")]
 

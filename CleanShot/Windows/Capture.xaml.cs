@@ -112,7 +112,7 @@ namespace CleanShot.Windows
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            
+
             if (e.ChangedButton == MouseButton.Left)
             {
                 if (confirmTooltip.IsOpen)
@@ -121,7 +121,7 @@ namespace CleanShot.Windows
                 }
                 startPoint = e.GetPosition(this);
             }
-            
+
         }
 
         private async void Window_MouseUp(object sender, MouseButtonEventArgs e)
@@ -134,8 +134,8 @@ namespace CleanShot.Windows
                     {
                         try
                         {
-                            await HideSelf();
-                            Screenshot.SaveCapture(Screenshot.GetCapture(GetDrawnRegion(), false));
+                            await HideAllButBackground();
+                            Screenshot.SaveCapture(Screenshot.GetCapture(GetDrawnRegion(true), false));
                             this.Close();
                         }
                         catch (Exception ex)
@@ -150,8 +150,8 @@ namespace CleanShot.Windows
                         CaptureControls controls = null;
                         try
                         {
-                            await HideSelf();
-                            var region = GetDrawnRegion();
+                            await HideAllButBackground();
+                            var region = GetDrawnRegion(false);
                             await CaptureControls.Create(region);
                             this.Close();
                         }
@@ -162,7 +162,7 @@ namespace CleanShot.Windows
                             MainWindow.Current.WriteToLog(ex);
                             this.Close();
                         }
-                       
+
                     }
                 }
             }
@@ -173,7 +173,7 @@ namespace CleanShot.Windows
                 confirmTooltip.FontSize = 15;
                 confirmTooltip.FontWeight = FontWeights.Bold;
                 confirmTooltip.Foreground = new SolidColorBrush(Colors.Blue);
-                var scaledRect = GetDrawnRegion();
+                var scaledRect = GetDrawnRegion(true);
                 confirmTooltip.PlacementRectangle = new Rect(scaledRect.X, scaledRect.Y, scaledRect.Width, scaledRect.Height);
                 confirmTooltip.Placement = System.Windows.Controls.Primitives.PlacementMode.Center;
                 confirmTooltip.IsOpen = true;
@@ -195,16 +195,22 @@ namespace CleanShot.Windows
                 borderCapture.Height = height;
             }
         }
-        private Rect GetDrawnRegion()
+        public Rect GetDrawnRegion(bool scaleWithDPI)
         {
-            return new Rect(Math.Round(borderCapture.Margin.Left * dpiScale + SystemInformation.VirtualScreen.Left, 0), Math.Round(borderCapture.Margin.Top * dpiScale + SystemInformation.VirtualScreen.Top, 0), Math.Round(borderCapture.Width * dpiScale, 0), Math.Round(borderCapture.Height * dpiScale, 0));
+            if (scaleWithDPI)
+            {
+                return new Rect(Math.Round(borderCapture.Margin.Left * dpiScale + SystemInformation.VirtualScreen.Left, 0), Math.Round(borderCapture.Margin.Top * dpiScale + SystemInformation.VirtualScreen.Top, 0), Math.Round(borderCapture.Width * dpiScale, 0), Math.Round(borderCapture.Height * dpiScale, 0));
+            }
+            else
+            {
+                return new Rect(Math.Round(borderCapture.Margin.Left + SystemInformation.VirtualScreen.Left, 0), Math.Round(borderCapture.Margin.Top + SystemInformation.VirtualScreen.Top, 0), Math.Round(borderCapture.Width, 0), Math.Round(borderCapture.Height, 0));
+            }
         }
-        private async Task HideSelf()
+        private async Task HideAllButBackground()
         {
             confirmTooltip.IsOpen = false;
             labelHeader.Visibility = Visibility.Collapsed;
             borderCapture.Visibility = Visibility.Collapsed;
-            this.Visibility = Visibility.Collapsed;
             while (labelHeader.IsVisible || confirmTooltip.IsVisible || borderCapture.IsVisible)
             {
                 await Task.Delay(100);
@@ -256,6 +262,6 @@ namespace CleanShot.Windows
             }
         }
 
-    
+
     }
 }

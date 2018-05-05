@@ -124,8 +124,11 @@ namespace CleanShot.Classes
                     newBytes.AddRange(applicationExtension);
                     newBytes.AddRange(fileBytes.Skip(13));
                     File.WriteAllBytes(saveFile, newBytes.ToArray());
+                    
                 }
                 gifEncoder.Frames.Clear();
+                GIFViewer.Create(saveFile);
+               
             }
             catch (OutOfMemoryException)
             {
@@ -141,7 +144,7 @@ namespace CleanShot.Classes
                 System.Windows.MessageBox.Show("Unable to remove temp files.  Try closing and reopening CleanShot.", "File Delete Failure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            Process.Start(Settings.Current.SaveFolder);
+            
         }
         public enum RecordingState
         {

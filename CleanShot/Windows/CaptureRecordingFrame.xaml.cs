@@ -35,6 +35,11 @@ namespace CleanShot.Windows
             timer.Interval = TimeSpan.FromMilliseconds(500);
             timer.Tick += (send, args) =>
             {
+                if (!this.IsLoaded)
+                {
+                    timer.Stop();
+                    return;
+                }
                 if (tick == 2)
                 {
                     topLeftFrame.Visibility = Visibility.Collapsed;
