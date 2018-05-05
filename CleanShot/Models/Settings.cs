@@ -28,26 +28,18 @@ namespace CleanShot.Models
 
         public static void Load()
         {
-            try
+            var fileInfo = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Settings.json");
+            if (fileInfo.Exists)
             {
-                var fileInfo = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot\Settings.json");
-                if (fileInfo.Exists)
+                var serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(Settings));
+                using (var fs = new FileStream(fileInfo.FullName, System.IO.FileMode.OpenOrCreate))
                 {
-                    var serializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(typeof(Settings));
-                    using (var fs = new FileStream(fileInfo.FullName, System.IO.FileMode.OpenOrCreate))
+                    var settings = (Settings)serializer.ReadObject(fs);
+                    foreach (var prop in typeof(Settings).GetProperties())
                     {
-                        var settings = (Settings)serializer.ReadObject(fs);
-                        foreach (var prop in typeof(Settings).GetProperties())
-                        {
-                            prop.SetValue(Settings.Current, prop.GetValue(settings));
-                        }
+                        prop.SetValue(Settings.Current, prop.GetValue(settings));
                     }
                 }
-            }
-            catch
-            {
-                System.Threading.Thread.Sleep(500);
-                Load();
             }
         }
         public static void Save()

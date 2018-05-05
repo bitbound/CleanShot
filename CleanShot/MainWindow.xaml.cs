@@ -59,7 +59,14 @@ namespace CleanShot
             this.DataContext = Settings.Current;
             WPF_Auto_Update.Updater.ServiceURI = "http://invis.me/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
             WPF_Auto_Update.Updater.RemoteFileURI = "http://invis.me/Downloads/CleanShot.exe";
-            Settings.Load();
+            try
+            {
+                Settings.Load();
+            }
+            catch (Exception ex)
+            {
+                WriteToLog(ex);
+            }
             WPF_Auto_Update.Updater.CheckCommandLineArgs();
         }
 
