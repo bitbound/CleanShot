@@ -32,7 +32,7 @@ namespace CleanShot.Windows
         }
         private void hyperTranslucency_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://invis.me");
+            System.Diagnostics.Process.Start("https://lucent.rocks");
         }
 
         private void hyperIcons8_Click(object sender, RoutedEventArgs e)
