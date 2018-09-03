@@ -57,8 +57,8 @@ namespace CleanShot
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
-            WPF_Auto_Update.Updater.ServiceURI = "https://lucent.rocks/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
-            WPF_Auto_Update.Updater.RemoteFileURI = "https://lucent.rocks/Downloads/CleanShot.exe";
+            WPF_Auto_Update.Updater.ServiceURI = "https://lucency.co/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
+            WPF_Auto_Update.Updater.RemoteFileURI = "https://lucency.co/Downloads/CleanShot.exe";
             try
             {
                 Settings.Load();
@@ -146,7 +146,7 @@ namespace CleanShot
         {
             System.Net.WebClient webClient = new System.Net.WebClient();
             System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
-            var result = await httpClient.GetAsync("https://lucent.rocks/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe");
+            var result = await httpClient.GetAsync("https://lucency.co/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe");
             var serverVersion = Version.Parse(await result.Content.ReadAsStringAsync());
             var thisVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             if (serverVersion > thisVersion)
@@ -162,7 +162,7 @@ namespace CleanShot
                     try
                     {
                         
-                        await webClient.DownloadFileTaskAsync(new Uri("https://lucent.rocks/Downloads/CleanShot.exe"), strFilePath);
+                        await webClient.DownloadFileTaskAsync(new Uri("https://lucency.co/Downloads/CleanShot.exe"), strFilePath);
                     }
                     catch
                     {

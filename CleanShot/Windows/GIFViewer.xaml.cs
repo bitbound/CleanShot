@@ -57,7 +57,7 @@ namespace CleanShot.Windows
             byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri("https://lucent.rocks/Services/ImageShare"), SaveFilePath);
+                response = await client.UploadFileTaskAsync(new Uri("https://lucency.co/Services/ImageShare"), SaveFilePath);
             }
             catch (System.Net.WebException)
             {
