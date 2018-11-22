@@ -157,7 +157,7 @@ namespace CleanShot.Windows
                         catch (Exception ex)
                         {
                             controls?.Close();
-                            System.Windows.MessageBox.Show("There was an error recording the video.  If the issue persists, please contact translucency@outlook.com.", "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            System.Windows.MessageBox.Show("There was an error recording the GIF.  If the issue persists, please contact translucency@outlook.com.", "Capture Error", MessageBoxButton.OK, MessageBoxImage.Error);
                             MainWindow.Current.WriteToLog(ex);
                             this.Close();
                         }

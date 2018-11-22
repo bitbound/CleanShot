@@ -59,7 +59,7 @@ namespace CleanShot.Classes
                 await Capture.Start(Models.CaptureMode.PNG);
             };
             Icon.ContextMenu.Items.Add(item);
-            item = new MenuItem() { Header = "Capture Video" };
+            item = new MenuItem() { Header = "Capture GIF" };
             item.Click += async (send, arg) =>
             {
                 await Capture.Start(Models.CaptureMode.GIF);

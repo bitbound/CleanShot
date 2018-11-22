@@ -77,13 +77,16 @@ namespace CleanShot.Classes
         {
             try
             {
+                if (GifEncoder == null)
+                {
+                    return;
+                }
                 var di = Directory.CreateDirectory(Settings.Current.SaveFolder);
                 var saveFile = Path.Combine(di.FullName, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss.ff") + ".gif");
 
           
                 using (var ms = new MemoryStream())
                 {
-        
                     GifEncoder.Save(ms);
                     var fileBytes = ms.ToArray();
                     var applicationExtension = new byte[] { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
