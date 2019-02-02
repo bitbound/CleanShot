@@ -9,6 +9,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -172,10 +173,15 @@ namespace CleanShot.Windows
             client.UploadProgressChanged += (send, arg) => {
                 progress.Value = arg.ProgressPercentage;
             };
+#if DEBUG
+            var url = "https://localhost:44355/ImageShare";
+#else
+            var url = "https://lucency.co/ImageShare";
+#endif
             byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri("https://lucency.co/Services/ImageShare"), savePath);
+                response = await client.UploadFileTaskAsync(new Uri(url), savePath);
             }
             catch (System.Net.WebException)
             {

@@ -54,10 +54,15 @@ namespace CleanShot.Windows
             client.UploadProgressChanged += (send, arg) => {
                 progress.Value = arg.ProgressPercentage;
             };
+#if DEBUG
+            var url = "https://localhost:44355/ImageShare";
+#else
+            var url = "https://lucency.co/ImageShare";
+#endif
             byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri("https://lucency.co/Services/ImageShare"), SaveFilePath);
+                response = await client.UploadFileTaskAsync(new Uri(url), SaveFilePath);
             }
             catch (System.Net.WebException)
             {
