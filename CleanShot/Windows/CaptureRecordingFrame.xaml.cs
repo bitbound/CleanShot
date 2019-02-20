@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CleanShot.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,11 @@ namespace CleanShot.Windows
         {
             InitializeComponent();
             Current = this;
+			if (Settings.Current.RecordingDelay < 1)
+			{
+				countdownText.Visibility = Visibility.Collapsed;
+			}
+			countdownText.Text = Settings.Current.RecordingDelay.ToString();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

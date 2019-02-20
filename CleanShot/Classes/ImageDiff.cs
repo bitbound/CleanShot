@@ -11,52 +11,74 @@ namespace CleanShot.Classes
 {
     public class ImageDiff
     {
-        public static Bitmap GetDifference(Bitmap bitmap1, Bitmap bitmap2)
-        {
-            if (bitmap1.Height != bitmap2.Height || bitmap1.Width != bitmap2.Width)
-            {
-                throw new Exception("Bitmaps are not of equal dimensions.");
-            }
-            if (!Bitmap.IsAlphaPixelFormat(bitmap1.PixelFormat) || !Bitmap.IsAlphaPixelFormat(bitmap2.PixelFormat) ||
-                !Bitmap.IsCanonicalPixelFormat(bitmap1.PixelFormat) || !Bitmap.IsCanonicalPixelFormat(bitmap2.PixelFormat))
-            {
-                throw new Exception("Bitmaps must be 32 bits per pixel and contain alpha channel.");
-            }
-            var newImage = new Bitmap(bitmap1.Width, bitmap1.Height);
+		private static BitmapData bd1;
+		private static BitmapData bd2;
+		private static BitmapData bd3;
+		private static Bitmap mergedFrame;
+		private static byte[] rgbValues1;
+		private static byte[] rgbValues2;
+		private static byte[] rgbValues3;
 
-            var bd1 = bitmap1.LockBits(new System.Drawing.Rectangle(0, 0, bitmap1.Width, bitmap1.Height), ImageLockMode.ReadOnly, bitmap1.PixelFormat);
-            var bd2 = bitmap2.LockBits(new System.Drawing.Rectangle(0, 0, bitmap2.Width, bitmap2.Height), ImageLockMode.ReadOnly, bitmap2.PixelFormat);
-            // Get the address of the first line.
-            IntPtr ptr1 = bd1.Scan0;
-            IntPtr ptr2 = bd2.Scan0;
+		public static Bitmap GetImageDiff(Bitmap currentFrame, Bitmap previousFrame)
+		{
+			if (currentFrame.Height != previousFrame.Height || currentFrame.Width != previousFrame.Width)
+			{
+				throw new Exception("Bitmaps are not of equal dimensions.");
+			}
+			if (!Bitmap.IsAlphaPixelFormat(currentFrame.PixelFormat) || !Bitmap.IsAlphaPixelFormat(previousFrame.PixelFormat) ||
+				!Bitmap.IsCanonicalPixelFormat(currentFrame.PixelFormat) || !Bitmap.IsCanonicalPixelFormat(previousFrame.PixelFormat))
+			{
+				throw new Exception("Bitmaps must be 32 bits per pixel and contain alpha channel.");
+			}
+			var width = currentFrame.Width;
+			var height = currentFrame.Height;
 
-            // Declare an array to hold the bytes of the bitmap.
-            int bytes = Math.Abs(bd1.Stride) * bitmap1.Height;
-            byte[] rgbValues1 = new byte[bytes];
-            byte[] rgbValues2 = new byte[bytes];
+			mergedFrame = new Bitmap(width, height);
 
-            // Copy the RGBA values into the array.
-            Marshal.Copy(ptr1, rgbValues1, 0, bytes);
-            Marshal.Copy(ptr2, rgbValues2, 0, bytes);
+			bd1 = previousFrame.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, currentFrame.PixelFormat);
+			bd2 = currentFrame.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, previousFrame.PixelFormat);
+			bd3 = mergedFrame.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, currentFrame.PixelFormat);
 
-            // Check RGBA value for each pixel.
-            for (int counter = 0; counter < rgbValues1.Length - 4; counter += 4)
-            {
-                if (rgbValues1[counter] != rgbValues2[counter] ||
-                    rgbValues1[counter + 1] != rgbValues2[counter + 1] ||
-                    rgbValues1[counter + 2] != rgbValues2[counter + 2] ||
-                    rgbValues1[counter + 3] != rgbValues2[counter + 3])
-                {
-                    // Change was found.
-                    var pixel = counter / 4;
-                    var row = (int)Math.Floor((double)pixel / bd1.Width);
-                    var column = pixel % bd1.Width;
-                    newImage.SetPixel(column, row, Color.FromArgb(rgbValues1[counter + 3], rgbValues1[counter + 2], rgbValues1[counter + 1], rgbValues1[counter]));
-                }
-            }
-            bitmap1.UnlockBits(bd1);
-            bitmap2.UnlockBits(bd2);
-            return newImage;
-        }
-    }
+
+			// Get the address of the first line.
+			IntPtr ptr1 = bd1.Scan0;
+			IntPtr ptr2 = bd2.Scan0;
+			IntPtr ptr3 = bd3.Scan0;
+
+			// Declare an array to hold the bytes of the bitmap.
+			int arraySize = Math.Abs(bd1.Stride) * currentFrame.Height;
+			rgbValues1 = new byte[arraySize];
+			rgbValues2 = new byte[arraySize];
+			rgbValues3 = new byte[arraySize];
+
+			// Copy the RGBA values into the array.
+			Marshal.Copy(ptr1, rgbValues1, 0, arraySize);
+			Marshal.Copy(ptr2, rgbValues2, 0, arraySize);
+
+			// Check RGBA value for each pixel.
+			for (int counter = 0; counter < rgbValues2.Length - 4; counter += 4)
+			{
+				if (rgbValues1[counter] != rgbValues2[counter] ||
+					rgbValues1[counter + 1] != rgbValues2[counter + 1] ||
+					rgbValues1[counter + 2] != rgbValues2[counter + 2] ||
+					rgbValues1[counter + 3] != rgbValues2[counter + 3])
+				{
+					// Change was found.
+					rgbValues3[counter] = rgbValues2[counter];
+					rgbValues3[counter + 1] = rgbValues2[counter + 1];
+					rgbValues3[counter + 2] = rgbValues2[counter + 2];
+					rgbValues3[counter + 3] = rgbValues2[counter + 3];
+				}
+			}
+
+			// Copy merged frame to bitmap.
+			Marshal.Copy(rgbValues3, 0, ptr3, rgbValues3.Length);
+
+			previousFrame.UnlockBits(bd1);
+			currentFrame.UnlockBits(bd2);
+			mergedFrame.UnlockBits(bd3);
+
+			return mergedFrame;
+		}
+	}
 }

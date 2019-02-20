@@ -25,6 +25,7 @@ namespace CleanShot.Models
         public bool Uninstalled { get; set; } = false;
         public bool IsTrayNotificationEnabled { get; set; } = true;
         public bool IsCloseToSystemTrayEnabled { get; set; } = true;
+		public int RecordingDelay { get; set; } = 3;
 
         public static void Load()
         {

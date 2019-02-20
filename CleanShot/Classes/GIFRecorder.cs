@@ -33,7 +33,7 @@ namespace CleanShot.Classes
 
             State = RecordingState.Recording;
             PreviousBitmap = new Bitmap((int)Region.Width, (int)Region.Height);
-            var captureStart = DateTime.Now;
+			Stopwatch captureTimer = Stopwatch.StartNew();
             try
             {
                 while (State != RecordingState.Stopped)
@@ -44,7 +44,7 @@ namespace CleanShot.Classes
                         continue;
                     }
 
-                    captureStart = DateTime.Now;
+					captureTimer.Restart();
                     using (var screenshot = Screenshot.GetCapture(Region, true))
                     {
                         using (var ms = new MemoryStream())
@@ -55,17 +55,16 @@ namespace CleanShot.Classes
                             }
                             else
                             {
-                                ImageDiff.GetDifference(screenshot, LastFrame).Save(ms, ImageFormat.Png);
+                                ImageDiff.GetImageDiff(screenshot, LastFrame).Save(ms, ImageFormat.Png);
                             }
                            
                             GifEncoder.Frames.Add(BitmapFrame.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad));
                         }
                       
-                        var captureTime = (DateTime.Now - captureStart).TotalMilliseconds;
-                        var delayTime = Math.Max(1, 100 - (int)captureTime);
                         LastFrame = (Bitmap)screenshot.Clone();
-                        await Task.Delay(delayTime);
-                    }
+                        var delayTime = Math.Max(1, 100 - captureTimer.Elapsed.TotalMilliseconds);
+						await Task.Delay((int)delayTime);
+					}
                 }
             }
             catch (OutOfMemoryException)

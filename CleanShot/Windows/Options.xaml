@@ -6,12 +6,12 @@
         xmlns:local="clr-namespace:CleanShot.Windows"
         xmlns:Models="clr-namespace:CleanShot.Models" x:Class="CleanShot.Windows.Options"
         mc:Ignorable="d"
-        Title="CleanShot Options" Height="350" Width="350" Closing="Window_Closing" Icon="/CleanShot;component/Assets/Camera.ico" Background="Black">
+        Title="CleanShot Options" Height="500" Width="350" Closing="Window_Closing" Icon="/CleanShot;component/Assets/Camera.ico" Background="Black">
 
     <Window.DataContext>
         <Models:Settings/>
     </Window.DataContext>
-    <ScrollViewer Margin="0,10,0,0">
+    <ScrollViewer Margin="0,10,0,0" VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10">
             <CheckBox Content="Keep CleanShot above all other windows" IsChecked="{Binding AlwaysOnTop, Mode=TwoWay}" Margin="0,0,0,10" Foreground="White"/>
             <CheckBox Content="Send to system tray when closed" IsChecked="{Binding IsCloseToSystemTrayEnabled, Mode=TwoWay}" Margin="0,0,0,10" Foreground="White"/>
@@ -23,16 +23,15 @@
             <CheckBox Content="Open captures in editor" IsChecked="{Binding OpenInEditor, Mode=TwoWay}" Margin="0,0,0,10" Foreground="White"/>
             <CheckBox Content="Capture cursor in image" IsChecked="{Binding CaptureCursor, Mode=TwoWay}" Margin="0,0,0,10" Foreground="White"/>
             <CheckBox Content="Show sent-to-tray notification" IsChecked="{Binding IsTrayNotificationEnabled, Mode=TwoWay}" Margin="0,0,0,10" Foreground="White"/>
+            <TextBlock Text="Recording Delay (seconds):" Margin="0,0,0,5" Foreground="White" />
+            <TextBox x:Name="textRecordingDelay" Text="{Binding RecordingDelay, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" Margin="0,0,0,5" />
             <TextBlock Text="Image Save Folder:" Margin="0,0,0,5" Foreground="White"/>
-            <TextBox x:Name="textImageSaveFolder" Text="{Binding SaveFolder, Mode=TwoWay}" Margin="0,0,0,5" LostFocus="textImageSaveFolder_LostFocus"/>
-            <Button x:Name="buttonBrowseImage" HorizontalAlignment="Right" Height="30" Width="30" Background="{x:Null}" BorderBrush="{x:Null}" Click="buttonBrowseImage_Click" ToolTip="Browse">
-                <Image Source="/CleanShot;component/Assets/icons8-folder-50.png">
-                    <Image.OpacityMask>
-                        <ImageBrush ImageSource="/CleanShot;component/Assets/icons8-folder-50.png"/>
-                    </Image.OpacityMask>
-                </Image>
-            </Button>
-            <Button x:Name="buttonUninstall" Content="Uninstall" Padding="5" HorizontalAlignment="Left" ToolTip="Remove data folder and files from AppData." Background="Black" Foreground="White" BorderBrush="White" Click="buttonUninstall_Click"/>
+            <Grid Margin="0,0,0,5">
+                <TextBox x:Name="textImageSaveFolder" Text="{Binding SaveFolder, Mode=TwoWay}" Margin="0,0,35,0" LostFocus="textImageSaveFolder_LostFocus"/>
+                <Button x:Name="buttonBrowseImage" HorizontalAlignment="Right" Width="25" Content="..." Background="Black" Foreground="White" BorderBrush="White" Click="buttonBrowseImage_Click" ToolTip="Browse"></Button>
+            </Grid>
+      
+            <Button x:Name="buttonUninstall" Content="Uninstall" Padding="5" Margin="0,10,0,0" HorizontalAlignment="Left" ToolTip="Remove data folder and files from AppData." Background="Black" Foreground="White" BorderBrush="White" Click="buttonUninstall_Click"/>
         </StackPanel>
     </ScrollViewer>
 </Window>

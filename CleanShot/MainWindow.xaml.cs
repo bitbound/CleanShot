@@ -57,7 +57,7 @@ namespace CleanShot
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
-            WPF_Auto_Update.Updater.ServiceURI = "https://lucency.co/Services/VersionCheck.cshtml?Path=/Downloads/CleanShot.exe";
+            WPF_Auto_Update.Updater.ServiceURI = "https://lucency.co/Services/VersionCheck?Path=Downloads/CleanShot.exe";
             WPF_Auto_Update.Updater.RemoteFileURI = "https://lucency.co/Downloads/CleanShot.exe";
             try
             {

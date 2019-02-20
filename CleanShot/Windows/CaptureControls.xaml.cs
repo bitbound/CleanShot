@@ -1,4 +1,5 @@
 ﻿using CleanShot.Classes;
+using CleanShot.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,12 +40,17 @@ namespace CleanShot.Windows
             controls.captureRecordingFrame.Height = Region.Height + 10;
             controls.Show();
             controls.captureRecordingFrame.Show();
-            await Task.Delay(1000);
-            while (controls.captureRecordingFrame.countdownText.Text != "0")
-            {
-                controls.captureRecordingFrame.countdownText.Text = (int.Parse(controls.captureRecordingFrame.countdownText.Text) - 1).ToString();
-                await Task.Delay(1000);
-            }
+
+			if (Settings.Current.RecordingDelay > 0)
+			{
+				await Task.Delay(1000);
+				while (controls.captureRecordingFrame.countdownText.Text != "0")
+				{
+					controls.captureRecordingFrame.countdownText.Text = (int.Parse(controls.captureRecordingFrame.countdownText.Text) - 1).ToString();
+					await Task.Delay(1000);
+				}
+			}
+
             controls.captureRecordingFrame.countdownText.Visibility = Visibility.Collapsed;
             do
             {
