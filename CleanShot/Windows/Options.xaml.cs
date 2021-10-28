@@ -36,23 +36,43 @@ namespace CleanShot.Windows
             var result = MessageBox.Show("This will remove the settings and files related to CleanShot.  Proceed?", "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-                if (runKey.GetValue("CleanShot") != null)
+                try
                 {
-                    runKey.DeleteValue("CleanShot");
+                    var runKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                    if (runKey.GetValue("CleanShot") != null)
+                    {
+                        runKey.DeleteValue("CleanShot");
+                    }
                 }
-                var desktopPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CleanShot.lnk");
-                if (File.Exists(desktopPath))
+                catch { }
+
+                try
                 {
-                    File.Delete(desktopPath);
+                    var desktopPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CleanShot.lnk");
+                    if (File.Exists(desktopPath))
+                    {
+                        File.Delete(desktopPath);
+                    }
                 }
-                var startDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "CleanShot");
-                if (Directory.Exists(startDir))
+                catch { }
+
+                try
                 {
-                    Directory.Delete(startDir, true);
+                    var startDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "CleanShot");
+                    if (Directory.Exists(startDir))
+                    {
+                        Directory.Delete(startDir, true);
+                    }
                 }
-                Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot", true);
-                Settings.Current.Uninstalled = true;
+                catch { }
+
+                try
+                {
+                    Directory.Delete(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\CleanShot", true);
+                    Settings.Current.Uninstalled = true;
+                }
+                catch { }
+
                 Application.Current.Shutdown(0);
             }
         }
