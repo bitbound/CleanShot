@@ -1,12 +1,14 @@
 ﻿using CleanShot.Models;
+using CleanShot.Properties;
 using CleanShot.Windows;
-using Hardcodet.Wpf.TaskbarNotification;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -14,63 +16,57 @@ namespace CleanShot.Classes
 {
     public static class TrayIcon
     {
-        public static TaskbarIcon Icon { get; set; }
+        public static NotifyIcon Icon { get; set; }
         public static void Create()
         {
-            if (Icon?.IsDisposed == false)
+            Icon?.Dispose();
+            Icon = new NotifyIcon();
+
+            using (var iconStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CleanShot.Assets.CameraEmbedded.ico"))
             {
-                Icon.Dispose();
+                Icon.Icon = new Icon(iconStream);
             }
-            Icon = new TaskbarIcon();
-            Icon.IconSource = new BitmapImage(new Uri("pack://application:,,,/Assets/Camera.ico"));
+
             CreateContextMenu();
-            Icon.TrayMouseDoubleClick += (send, arg) => {
+
+            Icon.MouseDoubleClick += (send, arg) => {
                 if (!App.Current.MainWindow.IsVisible)
                 {
                     App.Current.MainWindow.Show();
                 }
             };
-            Icon.TrayRightMouseUp += (send, arg) => {
-                if (MainWindow.Current.IsVisible)
-                {
-                    (Icon.ContextMenu.Items[0] as MenuItem).Visibility = System.Windows.Visibility.Collapsed;
-                }
-                else
-                {
-                    (Icon.ContextMenu.Items[0] as MenuItem).Visibility = System.Windows.Visibility.Visible;
-                }
-                Icon.ContextMenu.IsOpen = true;
-            };
+
+            Icon.Visible = true;
         }
 
         private static void CreateContextMenu()
         {
-            Icon.ContextMenu = new ContextMenu();
+            Icon.ContextMenu = new System.Windows.Forms.ContextMenu();
             MenuItem item;
-            item = new MenuItem() { Header = "Show" };
+            item = new MenuItem() { Text = "Show" };
             item.Click += (send, arg) =>
             {
                 MainWindow.Current.Show();
             };
-            Icon.ContextMenu.Items.Add(item);
-            item = new MenuItem() { Header = "Capture Image" };
+            Icon.ContextMenu.MenuItems.Add(item);
+            item = new MenuItem() { Text = "Capture Image" };
             item.Click += async (send, arg) =>
             {
                 await Capture.Start(Models.CaptureMode.PNG);
             };
-            Icon.ContextMenu.Items.Add(item);
-            item = new MenuItem() { Header = "Capture GIF" };
+            Icon.ContextMenu.MenuItems.Add(item);
+            item = new MenuItem() { Text = "Capture GIF" };
             item.Click += async (send, arg) =>
             {
                 await Capture.Start(Models.CaptureMode.GIF);
             };
-            Icon.ContextMenu.Items.Add(item);
-            item = new MenuItem() { Header = "Exit" };
+            Icon.ContextMenu.MenuItems.Add(item);
+            item = new MenuItem() { Text = "Exit" };
             item.Click += (send, arg) =>
             {
                 App.Current.Shutdown(0);
             };
-            Icon.ContextMenu.Items.Add(item);
+            Icon.ContextMenu.MenuItems.Add(item);
         }
     }
 }

@@ -18,7 +18,6 @@ using CleanShot.Models;
 using System.IO;
 using System.Windows.Interop;
 using CleanShot.Windows;
-using CleanShot.Controls;
 using System.Windows.Media.Animation;
 using CleanShot.Classes;
 using System.Windows.Controls.Primitives;
@@ -40,10 +39,7 @@ namespace CleanShot
             App.Current.Exit += (send, arg) =>
             {
                 Settings.Save();
-                if (TrayIcon.Icon?.IsDisposed == false)
-                {
-                    TrayIcon.Icon.Dispose();
-                }
+                TrayIcon.Icon?.Dispose();
             };
             App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             foreach (var proc in Process.GetProcessesByName("CleanShot").Where(proc=>proc.Id != Process.GetCurrentProcess().Id))
@@ -57,8 +53,6 @@ namespace CleanShot
             InitializeComponent();
             Current = this;
             this.DataContext = Settings.Current;
-            WPF_Auto_Update.Updater.ServiceURI = "https://jaredg.dev/api/VersionCheck?Path=Downloads/CleanShot.exe";
-            WPF_Auto_Update.Updater.RemoteFileURI = "https://jaredg.dev/Downloads/CleanShot.exe";
             try
             {
                 Settings.Load();
@@ -67,7 +61,6 @@ namespace CleanShot
             {
                 WriteToLog(ex);
             }
-            WPF_Auto_Update.Updater.CheckCommandLineArgs();
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -78,7 +71,6 @@ namespace CleanShot
             }
             CheckInstallItems();
             TrayIcon.Create();
-            await WPF_Auto_Update.Updater.CheckForUpdates(true);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -91,7 +83,21 @@ namespace CleanShot
             e.Cancel = true;
             if (Settings.Current?.IsTrayNotificationEnabled == true)
             {
-                TrayIcon.Icon?.ShowCustomBalloon(new TrayBalloon(), PopupAnimation.Fade, 5000);
+                void StopNotification(object s, EventArgs a)
+                {
+                    Settings.Current.IsTrayNotificationEnabled = false;
+                }
+
+                TrayIcon.Icon.BalloonTipClicked += StopNotification;
+
+                TrayIcon.Icon.ShowBalloonTip(5_000, "CleanShot is still running", "Click to stop this message", ToolTipIcon.Info);
+
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(3_000);
+                    TrayIcon.Icon.BalloonTipClicked -= StopNotification;
+                });
+
             }
             this?.Hide();
         }
@@ -144,35 +150,17 @@ namespace CleanShot
 
         private async Task CheckForUpdates(bool Silent)
         {
-            System.Net.WebClient webClient = new System.Net.WebClient();
-            System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
+            var httpClient = new System.Net.Http.HttpClient();
             var result = await httpClient.GetAsync("https://jaredg.dev/api/VersionCheck?Path=/Downloads/CleanShot.exe");
             var serverVersion = Version.Parse(await result.Content.ReadAsStringAsync());
             var thisVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             if (serverVersion > thisVersion)
             {
-                var strFilePath = System.IO.Path.GetTempPath() + "CleanShot.exe";
-                var msgResult = System.Windows.MessageBox.Show("A new version of CleanShot is available!  Would you like to download it now?  It's a no-fuss, instant process.", "New Version Available", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var msgResult = System.Windows.MessageBox.Show("A new version of CleanShot is available!  Would you like to download it now?", "New Version Available", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (msgResult == MessageBoxResult.Yes)
                 {
-                    if (File.Exists(strFilePath))
-                    {
-                        File.Delete(strFilePath);
-                    }
-                    try
-                    {
-                        
-                        await webClient.DownloadFileTaskAsync(new Uri("https://jaredg.dev/Downloads/CleanShot.exe"), strFilePath);
-                    }
-                    catch
-                    {
-                        if (!Silent)
-                        {
-                            System.Windows.MessageBox.Show("Unable to contact the server.  Check your network connection or try again later.", "Server Unreachable", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                        }
-                        return;
-                    }
-                    Process.Start(strFilePath, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+
+                    Process.Start("https://jaredg.dev/Downloads/CleanShot.exe");
                     App.Current.Shutdown();
                     return;
                 }

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -23,7 +22,6 @@ namespace CleanShot.Windows
     /// </summary>
     public partial class GIFViewer : Window
     {
-        private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
 #if DEBUG
         private readonly string _uploadUrl = "https://localhost:5001/api/file";
 #else

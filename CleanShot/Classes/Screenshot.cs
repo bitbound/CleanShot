@@ -1,5 +1,4 @@
-﻿using CleanShot.Controls;
-using CleanShot.Models;
+﻿using CleanShot.Models;
 using CleanShot.Win32;
 using CleanShot.Windows;
 using System;
@@ -69,16 +68,31 @@ namespace CleanShot.Classes
                 var saveFile = Path.Combine(Settings.Current.SaveFolder, "CleanShot_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss.ff"));
                 Directory.CreateDirectory(Settings.Current.SaveFolder);
                 CaptureBitmap.Save(saveFile + ".png", System.Drawing.Imaging.ImageFormat.Png);
-                TrayIcon.Icon.ShowCustomBalloon(new CaptureFileBalloon(), PopupAnimation.Fade, 5000);
+
+                void OpenFolder(object sender, EventArgs e)
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", Settings.Current.SaveFolder);
+                }
+
+                TrayIcon.Icon.BalloonTipClicked += OpenFolder;
+                
+                TrayIcon.Icon.ShowBalloonTip(3_000, "Screen Capture Successful", "Click to open output folder", ToolTipIcon.Info);
+
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(5_000);
+                    TrayIcon.Icon.BalloonTipClicked -= OpenFolder;
+                });
             }
             if (Settings.Current.CopyToClipboard)
             {
                 System.Windows.Forms.Clipboard.SetImage(CaptureBitmap);
                 if (!Settings.Current.SaveToDisk)
                 {
-                    TrayIcon.Icon.ShowCustomBalloon(new CaptureClipboardBalloon(), PopupAnimation.Fade, 5000);
+                    TrayIcon.Icon.ShowBalloonTip(3_000, "Screen Capture Successful", "Image copied to clipboard", ToolTipIcon.Info);
                 }
             }
+
             if (Settings.Current.OpenInEditor)
             {
                 Editor.Create(CaptureBitmap);

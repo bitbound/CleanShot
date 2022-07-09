@@ -1,5 +1,4 @@
 ﻿using CleanShot.Classes;
-using CleanShot.Controls;
 using CleanShot.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -154,7 +152,9 @@ namespace CleanShot.Windows
         private void buttonCopy_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetImage(ImageSourceFrame);
-            TrayIcon.Icon.ShowCustomBalloon(new CaptureClipboardBalloon(), PopupAnimation.Fade, 5000);
+
+            TrayIcon.Icon.ShowBalloonTip(3_000, "Clipboard Set", "Image copied to clipboard", System.Windows.Forms.ToolTipIcon.Info);
+
         }
 
         private async void buttonShare_Click(object sender, RoutedEventArgs e)

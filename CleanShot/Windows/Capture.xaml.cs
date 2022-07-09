@@ -18,7 +18,6 @@ using System.IO;
 using CleanShot.Models;
 using CleanShot.Win32;
 using System.Runtime.InteropServices;
-using CleanShot.Controls;
 using CleanShot.Classes;
 using System.Windows.Controls.Primitives;
 
