@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -22,6 +23,14 @@ namespace CleanShot.Windows
     /// </summary>
     public partial class GIFViewer : Window
     {
+        private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
+#if DEBUG
+        private readonly string _uploadUrl = "https://localhost:5001/api/file";
+#else
+        private readonly string _uploadUrl = "https://zend.jaredg.dev/api/file";
+#endif
+        private SavedFile _savedFile;
+
         private GIFViewer()
         {
             InitializeComponent();
@@ -34,8 +43,19 @@ namespace CleanShot.Windows
             gifViewer.mediaElement.Source = new Uri(saveFile);
             gifViewer.Show();
         }
+        private void buttonOpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(Settings.Current.SaveFolder);
+        }
+
         private async void buttonShare_Click(object sender, RoutedEventArgs e)
         {
+            if (_savedFile != null)
+            {
+                SetClipboard(_savedFile);
+                return;
+            }
+
             var popup = new ToolTip();
             popup.BorderBrush = new SolidColorBrush(Colors.LightGray);
             popup.BorderThickness = new Thickness(2);
@@ -54,15 +74,11 @@ namespace CleanShot.Windows
             client.UploadProgressChanged += (send, arg) => {
                 progress.Value = arg.ProgressPercentage;
             };
-#if DEBUG
-            var url = "https://localhost:44355/ImageShare";
-#else
-            var url = "https://lucency.co/ImageShare";
-#endif
+
             byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri(url), SaveFilePath);
+                response = await client.UploadFileTaskAsync(new Uri(_uploadUrl), SaveFilePath);
             }
             catch (System.Net.WebException)
             {
@@ -70,14 +86,18 @@ namespace CleanShot.Windows
                 MessageBox.Show("There was a problem uploading the image.  Your internet connection may not be working, or the web service may be temporarily unavailable.", "Upload Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
             var strResponse = Encoding.UTF8.GetString(response);
             popup.IsOpen = false;
-            Process.Start(strResponse);
+            _savedFile = _serializer.Deserialize<SavedFile>(strResponse);
+
+            SetClipboard(_savedFile);
         }
 
-        private void buttonOpenFolder_Click(object sender, RoutedEventArgs e)
+        private void SetClipboard(SavedFile savedFile)
         {
-            Process.Start(Settings.Current.SaveFolder);
+            Clipboard.SetText($"{_uploadUrl}/{savedFile.Id}");
+            MessageBox.Show("Download link copied to clipboard.", "Copied To Clipboard", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

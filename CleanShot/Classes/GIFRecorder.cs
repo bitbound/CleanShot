@@ -19,7 +19,6 @@ namespace CleanShot.Classes
     public static class GIFRecorder
     {
         public static RecordingState State { get; set; } = RecordingState.Stopped;
-        private static Bitmap PreviousBitmap { get; set; }
         private static GifBitmapEncoder GifEncoder { get; set; }
         private static Bitmap LastFrame { get; set; }
         public static async void Record(Rect Region)
@@ -32,7 +31,6 @@ namespace CleanShot.Classes
             GifEncoder = new GifBitmapEncoder();
 
             State = RecordingState.Recording;
-            PreviousBitmap = new Bitmap((int)Region.Width, (int)Region.Height);
 			Stopwatch captureTimer = Stopwatch.StartNew();
             try
             {
