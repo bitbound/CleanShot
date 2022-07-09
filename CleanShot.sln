@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanShot", "CleanShot\CleanShot.csproj", "{1F89D72F-4A92-4833-B0C7-A550762C98FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanShot.Server", "CleanShot.Server\CleanShot.Server.csproj", "{D468B136-14A7-4E02-A923-4727E769F348}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1F89D72F-4A92-4833-B0C7-A550762C98FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F89D72F-4A92-4833-B0C7-A550762C98FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F89D72F-4A92-4833-B0C7-A550762C98FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D468B136-14A7-4E02-A923-4727E769F348}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D468B136-14A7-4E02-A923-4727E769F348}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D468B136-14A7-4E02-A923-4727E769F348}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D468B136-14A7-4E02-A923-4727E769F348}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

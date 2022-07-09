@@ -1,0 +1,17 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "CleanShot File Sharing";
+}
+
+<link rel="stylesheet" href="~/css/FileSharing.css" />
+<script src="~/js/FileSharing.js"></script>
+
+
+<div class="lead" style="margin-top:40px; margin-bottom: 10px">File Sharing Utility</div>
+<div class="drop-frame">
+    <div id="divDropMessage" onclick="uploadClicked()">
+        Drop a file or tap here.
+    </div>
+    <input type="file" hidden id="inputUpload" onchange="uploadFiles(this.files)" />
+</div>

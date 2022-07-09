@@ -1,0 +1,78 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+.drop-frame {
+    width: calc(100% - 40px);
+    margin-right: 20px;
+    margin-left: 20px;
+    background-color: whitesmoke;
+    border: 2px solid gray;
+    text-align: center;
+}
+
+#divDropMessage {
+    display: inline-block;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    min-width: 200px;
+    font-weight: bold;
+    padding: 25px;
+    border: 2px solid dimgray;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.loading-frame {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.8);
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#loadingProgressLabel {
+    color: white;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, 10px);
+}
+
+
+.loading-track {
+    height: 50px;
+    display: inline-block;
+    position: absolute;
+    top: calc(50% - 50px);
+    left: calc(50% - 5px);
+}
+
+.loading-dot {
+    height: 5px;
+    width: 5px;
+    background-color: white;
+    border-radius: 100%;
+    opacity: 0;
+}
+
+.loading-dot-animated {
+    animation-name: loading-dot-animated;
+    animation-direction: alternate;
+    animation-duration: .75s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes loading-dot-animated {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

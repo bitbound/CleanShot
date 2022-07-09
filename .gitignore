@@ -240,3 +240,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/CleanShot.Server/App_Data/FileSharing_Entries

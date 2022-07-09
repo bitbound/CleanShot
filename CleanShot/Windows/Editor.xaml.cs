@@ -29,14 +29,11 @@ namespace CleanShot.Windows
     /// </summary>
     public partial class Editor : Window
     {
-        private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
 #if DEBUG
-        private readonly string _uploadUrl = "https://localhost:5001/api/file";
+        private readonly string _uploadUrl = "https://localhost:7204/api/file";
 #else
-        private readonly string _uploadUrl = "https://zend.jaredg.dev/api/file";
+        private readonly string _uploadUrl = "https://clipshare.jaredg.dev/api/file";
 #endif
-        private SavedFile _savedFile;
-
         public static Editor Current { get; set; }
         public Bitmap OriginalImage { get; set; }
         public Bitmap EditedImage { get; set; }
@@ -162,12 +159,6 @@ namespace CleanShot.Windows
 
         private async void buttonShare_Click(object sender, RoutedEventArgs e)
         {
-            if (_savedFile != null)
-            {
-                SetClipboard(_savedFile);
-                return;
-            }
-
             var popup = new ToolTip();
             popup.BorderBrush = new SolidColorBrush(Colors.LightGray);
             popup.BorderThickness = new Thickness(2);
@@ -204,9 +195,7 @@ namespace CleanShot.Windows
             
             var strResponse = Encoding.UTF8.GetString(response);
             popup.IsOpen = false;
-            _savedFile = _serializer.Deserialize<SavedFile>(strResponse);
-
-            SetClipboard(_savedFile);
+            Process.Start(strResponse);
         }
 
         private void SetClipboard(SavedFile savedFile)
