@@ -63,7 +63,7 @@ namespace CleanShot
             }
         }
 
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (Environment.CommandLine.Contains("-hidden"))
             {
@@ -86,6 +86,7 @@ namespace CleanShot
                 void StopNotification(object s, EventArgs a)
                 {
                     Settings.Current.IsTrayNotificationEnabled = false;
+                    Settings.Save();
                 }
 
                 TrayIcon.Icon.BalloonTipClicked += StopNotification;
