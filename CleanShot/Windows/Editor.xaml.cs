@@ -30,7 +30,7 @@ namespace CleanShot.Windows
 #if DEBUG
         private readonly string _uploadUrl = "https://localhost:7204/api/file";
 #else
-        private readonly string _uploadUrl = "https://clipshare.jaredg.dev/api/file";
+        private readonly string _uploadUrl = "https://cleanshot.jaredg.dev/api/file";
 #endif
         public static Editor Current { get; set; }
         public Bitmap OriginalImage { get; set; }
@@ -180,10 +180,12 @@ namespace CleanShot.Windows
                 progress.Value = arg.ProgressPercentage;
             };
 
-            byte[] response = new byte[0];
             try
             {
-                response = await client.UploadFileTaskAsync(new Uri(_uploadUrl), savePath);
+                var response = await client.UploadFileTaskAsync(new Uri(_uploadUrl), savePath);
+                var downloadUrl = Encoding.UTF8.GetString(response);
+                popup.IsOpen = false;
+                SetClipboard(downloadUrl);
             }
             catch (System.Net.WebException)
             {
@@ -191,16 +193,11 @@ namespace CleanShot.Windows
                 MessageBox.Show("There was a problem uploading the image.  Your internet connection may not be working, or the web service may be temporarily unavailable.", "Upload Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
-            
-            var strResponse = Encoding.UTF8.GetString(response);
-            popup.IsOpen = false;
-            Process.Start(strResponse);
         }
 
-        private void SetClipboard(SavedFile savedFile)
+        private void SetClipboard(string downloadUrl)
         {
-            Clipboard.SetText($"{_uploadUrl}/{savedFile.Id}");
+            Clipboard.SetText(downloadUrl);
             MessageBox.Show("Download link copied to clipboard.", "Copied To Clipboard", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
