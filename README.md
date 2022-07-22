@@ -4,15 +4,15 @@ A portable Windows app for taking screenshots, creating memes, and recording GIF
 
 > Some day, when I have spare time, I'll refactor all this to use proper MVVM architecture.  Maybe even throw in some unit tests.  But until then, I know it's bad.  I was but a wee little programmer back when I created this.
 
-Captures are saved in PNG or GIF format.  Uploads for sharing are sent to a web service at my site (https://lucency.co), and they are automatically deleted after 2 weeks.
+Captures are saved in PNG or GIF format.  Uploads for sharing are sent to a web service at my site (https://jaredg.dev), and they are automatically deleted after 2 weeks.
 
-Download current release: https://lucency.co/?app=CleanShot
+Download current release: https://jaredg.dev/projects/cleanshot
 
 Main Window  
-![CleanShot](https://lucency.co/Images/Screenshots/CleanShot1.png)
+![CleanShot](https://jaredg.dev/assets/screenshots/CleanShot1.jpg)
 
 Meme Generator  
-![CleanShot](https://lucency.co/Images/Screenshots/CleanShot2.png)
+![CleanShot](https://jaredg.dev/assets/screenshots/CleanShot2.jpg)
 
 Video Recording Controls  
-![CleanShot](https://lucency.co/Images/Screenshots/CleanShot3.png)
+![CleanShot](https://jaredg.dev/assets/screenshots/CleanShot3.jpg)
